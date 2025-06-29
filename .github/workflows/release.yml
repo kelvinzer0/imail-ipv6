@@ -15,7 +15,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.16
+          go-version: 1.22
 
       - name: Build for Linux ARM64
         run: |
