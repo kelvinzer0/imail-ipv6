@@ -12,7 +12,7 @@ check_go_environment() {
 load_vars() {
 	OS=$(uname | tr '[:upper:]' '[:lower:]')
 
-	VERSION=$(get_latest_release "midoks/imail")
+	VERSION=$(get_latest_release "kelvinzer0/imail-ipv6")
 
 	TARGET_DIR="/usr/local/imail"
 }
@@ -33,7 +33,7 @@ func main() { fmt.Println(runtime.GOARCH) }" > /tmp/go_arch.go
 }
 
 get_download_url() {
-	DOWNLOAD_URL="https://github.com/midoks/imail/releases/download/$VERSION/imail_${VERSION}_${OS}_${ARCH}.tar.gz"
+	DOWNLOAD_URL="https://github.com/kelvinzer0/imail-ipv6/releases/download/$VERSION/imail_${VERSION}_${OS}_${ARCH}.tar.gz"
 }
 
 # download file
