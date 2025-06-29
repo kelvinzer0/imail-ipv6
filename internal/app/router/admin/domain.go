@@ -122,11 +122,21 @@ func CheckDomain(c *context.Context) {
 				//A
 				if !d.A {
 					host := strings.Trim(mx[0].Host, ".")
-					err := dkim.CheckDomainA(host)
+					err := dkim.CheckDomainARecord(host)
 					if err == nil {
 						d.A = true
 					} else {
 						d.A = false
+					}
+				}
+
+				if !d.AAAA {
+					host := strings.Trim(mx[0].Host, ".")
+					err := dkim.CheckDomainAAAARecord(host)
+					if err == nil {
+						d.AAAA = true
+					} else {
+						d.AAAA = false
 					}
 				}
 			}
@@ -140,7 +150,7 @@ func CheckDomain(c *context.Context) {
 		if len(mx) > 1 {
 			host := strings.Trim(mx[0].Host, ".")
 			// fmt.Println("a:", host)
-			err := dkim.CheckDomainA(host)
+			err := dkim.CheckDomainARecord(host)
 			// fmt.Println("a err:", err)
 			if err == nil {
 				d.A = true
@@ -149,6 +159,25 @@ func CheckDomain(c *context.Context) {
 			}
 		} else {
 			d.A = false
+		}
+	}
+
+	//AAAA
+	if !d.AAAA {
+		mx, _ := net.LookupMX(domain)
+
+		if len(mx) > 1 {
+			host := strings.Trim(mx[0].Host, ".")
+			// fmt.Println("aaaa:", host)
+			err := dkim.CheckDomainAAAARecord(host)
+			// fmt.Println("aaaa err:", err)
+			if err == nil {
+				d.AAAA = true
+			} else {
+				d.AAAA = false
+			}
+		} else {
+			d.AAAA = false
 		}
 	}
 

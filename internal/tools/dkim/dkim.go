@@ -30,7 +30,7 @@ func makeRsa() ([]byte, []byte, error) {
 	return []byte{}, []byte{}, err
 }
 
-func CheckDomainA(domain string) error {
+func CheckDomainARecord(domain string) error {
 	findIp, err := net.LookupIP(domain)
 	if err != nil {
 		return err
@@ -43,14 +43,35 @@ func CheckDomainA(domain string) error {
 
 	var isFind = false
 	for _, fIp := range findIp {
-		if strings.EqualFold(fIp.String(), ip) {
+		if fIp.To4() != nil && strings.EqualFold(fIp.String(), ip) {
 			isFind = true
 			break
 		}
 	}
 
 	if !isFind {
-		return errors.New("IP not configured by domain name!")
+		return errors.New("IPv4 not configured by domain name!")
+	}
+
+	return nil
+}
+
+func CheckDomainAAAARecord(domain string) error {
+	findIp, err := net.LookupIP(domain)
+	if err != nil {
+		return err
+	}
+
+	var isFind = false
+	for _, fIp := range findIp {
+		if fIp.To4() == nil && fIp.To16() != nil { // Check if it's an IPv6 address
+			isFind = true
+			break
+		}
+	}
+
+	if !isFind {
+		return errors.New("IPv6 not configured by domain name!")
 	}
 
 	return nil

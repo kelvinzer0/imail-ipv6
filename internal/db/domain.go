@@ -10,6 +10,7 @@ type Domain struct {
 	Domain      string    `gorm:"unique;comment:顶级域名"`
 	Mx          bool      `gorm:"comment:MX记录"`
 	A           bool      `gorm:"comment:A记录"`
+	AAAA        bool      `gorm:"comment:AAAA记录"`
 	Spf         bool      `gorm:"comment:Spf记录"`
 	Dkim        bool      `gorm:"comment:Dkim记录"`
 	Dmarc       bool      `gorm:"comment:DMARC记录"`

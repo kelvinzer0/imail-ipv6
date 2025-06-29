@@ -20,6 +20,7 @@
 							<th>{{.i18n.Tr "admin.domain.name"}}</th>
 							<th>{{.i18n.Tr "admin.domain.mx"}}</th>
 							<th>{{.i18n.Tr "admin.domain.a"}}</th>
+							<th>{{.i18n.Tr "admin.domain.aaaa"}}</th>
 							<th>{{.i18n.Tr "admin.domain.spf"}}</th>
 							<th>{{.i18n.Tr "admin.domain.dkim"}}</th>
 							<th>{{.i18n.Tr "admin.domain.dmarc"}}</th>
@@ -36,6 +37,7 @@
 								
 							</td>
 							<td><i class="fa fa{{if .A}}-check{{end}}-circle-o"></i></td>
+							<td><i class="fa fa{{if .AAAA}}-check{{end}}-circle-o"></i></td>
 							<td><i class="fa fa{{if .Spf}}-check{{end}}-circle-o"></i></td>
 							<td><i class="fa fa{{if .Dkim}}-check{{end}}-circle-o"></i></td>
 							<td><i class="fa fa{{if .Dmarc}}-check{{end}}-circle-o"></i></td>
