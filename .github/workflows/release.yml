@@ -22,7 +22,7 @@ jobs:
           VERSION=$(echo ${{ github.ref }} | sed -e "s/^refs\/tags\/v//")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o imail .
-          tar -czvf imail_${VERSION}_linux_arm64.tar.gz imail
+          tar -czvf imail_${VERSION}_linux_arm64.tar.gz imail conf scripts LICENSE README.md
 
       - name: Create Release
         id: create_release
