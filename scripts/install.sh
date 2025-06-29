@@ -66,19 +66,33 @@ main() {
 
 	load_vars
 
-	get_arch
+	local_tar_gz=""
+	if [ -n "$1" ]; then
+		local_tar_gz="$1"
+	fi
 
-	get_download_url
-
-	DOWNLOAD_FILE="$(mktemp).tar.gz"
-	download_file $DOWNLOAD_URL $DOWNLOAD_FILE
+	if [ -z "$local_tar_gz" ]; then
+		get_arch
+		get_download_url
+		DOWNLOAD_FILE="$(mktemp).tar.gz"
+		download_file "$DOWNLOAD_URL" "$DOWNLOAD_FILE"
+	else
+		DOWNLOAD_FILE="$local_tar_gz"
+		if [ ! -f "$DOWNLOAD_FILE" ]; then
+			printf "\e[1;31mError: Local tar.gz file not found: %s\e[0m\n" "$DOWNLOAD_FILE"
+			exit 1
+		fi
+		printf "\n\e[1;33mUsing local tar.gz file: %s\e[0m\n" "$DOWNLOAD_FILE"
+	fi
 
 	if [ ! -d "$TARGET_DIR" ]; then
 		mkdir -p "$TARGET_DIR"
 	fi
 
-	tar -C "$TARGET_DIR" -zxf $DOWNLOAD_FILE
-	rm -rf $DOWNLOAD_FILE
+	tar -C "$TARGET_DIR" -zxf "$DOWNLOAD_FILE"
+	if [ -z "$local_tar_gz" ]; then
+		rm -rf "$DOWNLOAD_FILE"
+	fi
 
 	pushd "$TARGET_DIR/scripts" >/dev/null 2>&1
 	bash make.sh
