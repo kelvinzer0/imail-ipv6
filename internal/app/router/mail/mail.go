@@ -34,42 +34,36 @@ type MailSearchOptions struct {
 }
 
 func RenderMailSearch(c *context.Context, opts *MailSearchOptions) {
-	page := c.QueryInt("page")
-	if page <= 1 {
-		page = 1
-	}
-
 	var (
-		mail  []db.Mail
+		mails []*db.Mail
 		count int64
 		err   error
 	)
 
-	keyword := c.Query("q")
-	opt := &db.MailSearchOptions{
-		Keyword:  keyword,
-		OrderBy:  opts.OrderBy,
-		Page:     page,
-		PageSize: opts.PageSize,
-		Type:     opts.Type,
-		Uid:      c.User.Id,
+	if opts.Page <= 0 {
+		opts.Page = 1
 	}
 
-	if len(keyword) == 0 {
-		mail, err = db.MailList(page, opts.PageSize, opt)
-		count = db.MailCountWithOpts(opt)
-	} else {
-		mail, count, err = db.MailSearchByName(opt)
-		if err != nil {
-			c.Error(err, "search user by name")
-			return
-		}
+	if opts.PageSize <= 0 {
+		opts.PageSize = conf.App.PageSize
 	}
-	c.Data["Keyword"] = keyword
+
+	mails, err = db.MailList(opts.Type, opts.Page, opts.PageSize, opts.Keyword)
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailList", err)
+		return
+	}
+
+	count, err = db.MailCountWithOpts(&db.MailSearchOptions{Type: opts.Type, Keyword: opts.Keyword})
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailCountWithOpts", err)
+		return
+	}
+
+	c.Data["Keyword"] = opts.Keyword
+	c.Data["Mails"] = mails
 	c.Data["Total"] = count
-	c.Data["Bid"] = opts.Bid
-	c.Data["Page"] = paginater.New(int(count), opts.PageSize, page, 5)
-	c.Data["Mail"] = mail
+	c.Data["Page"] = paginater.New(int(count), opts.PageSize, opts.Page, c.Req.URL.Query())
 
 	c.Success(opts.TplName)
 }
@@ -139,9 +133,16 @@ func Deleted(c *context.Context) {
 func HardDeleteDraftMail(c *context.Context) {
 	id := c.ParamsInt64(":id")
 
-	mail, _ := db.MailById(id)
-	if !db.MailHardDeleteById(mail.Uid, mail.Id) {
-		c.Flash.Success(c.Tr("mail.draft.deletion_fail"))
+	mail, err := db.MailById(id)
+	if err != nil {
+		c.Flash.Error(c.Tr("mail.draft.deletion_fail"))
+		c.Redirect("/mail/draft")
+		return
+	}
+
+	err = db.MailHardDeleteById(mail.Uid, mail.Id)
+	if err != nil {
+		c.Flash.Error(c.Tr("mail.draft.deletion_fail"))
 	} else {
 		c.Flash.Success(c.Tr("mail.draft.deletion_success"))
 	}
@@ -186,9 +187,21 @@ func New(c *context.Context) {
 	bid := c.ParamsInt64(":bid")
 	id := c.ParamsInt64(":id")
 
-	mail, _ := db.MailById(id)
-	content, _ := db.MailContentRead(mail.Uid, mail.Id)
-	email, _ := mcopa.Parse(bufio.NewReader(strings.NewReader(content)))
+	mail, err := db.MailById(id)
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailById", err)
+		return
+	}
+	content, err := db.MailContentRead(mail.Uid, mail.Id)
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailContentRead", err)
+		return
+	}
+	email, err := mcopa.Parse(bufio.NewReader(strings.NewReader(content)))
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "mcopa.Parse", err)
+		return
+	}
 
 	if strings.EqualFold(email.TextBody, "") {
 		content = email.HTMLBody
@@ -222,6 +235,10 @@ func NewPost(c *context.Context, f form.SendMail) {
 
 	mail_from := fmt.Sprintf("%s@%s", c.User.Name, from)
 	tc, err := tmail.GetMailSend(mail_from, f.ToMail, f.Subject, f.Content)
+	if err != nil {
+		c.RenderWithErr(err.Error(), MAIL_NEW, &f)
+		return
+	}
 
 	if f.Id != 0 {
 		_, err = db.MailUpdate(f.Id, c.User.Id, 0, mail_from, f.ToMail, tc, 0, false)
@@ -252,6 +269,10 @@ func NewPostDraft(c *context.Context, f form.SendMail) {
 
 	mail_from := fmt.Sprintf("%s@%s", c.User.Name, from)
 	tc, err := tmail.GetMailSend(mail_from, f.ToMail, f.Subject, f.Content)
+	if err != nil {
+		c.Fail(-1, c.Tr("common.fail"))
+		return
+	}
 
 	var mid int64
 	if f.Id != 0 {
@@ -282,9 +303,11 @@ func Content(c *context.Context) {
 	c.Data["Bid"] = bid
 
 	r, err := db.MailById(id)
-	if err == nil {
-		c.Data["Mail"] = r
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailById", err)
+		return
 	}
+	c.Data["Mail"] = r
 
 	contentData, err := db.MailContentRead(r.Uid, id)
 	if err != nil {
@@ -315,9 +338,11 @@ func ContentHtml(c *context.Context) {
 	c.Data["Bid"] = bid
 
 	r, err := db.MailById(id)
-	if err == nil {
-		c.Data["Mail"] = r
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailById", err)
+		return
 	}
+	c.Data["Mail"] = r
 
 	contentData, err := db.MailContentRead(r.Uid, id)
 	if err != nil {
@@ -346,6 +371,7 @@ func ContentDownload(c *context.Context) {
 	r, err := db.MailById(id)
 
 	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailById", err)
 		return
 	}
 	emailFilePath := db.MailContentFilename(r.Uid, id)
@@ -366,9 +392,11 @@ func ContentAttach(c *context.Context) {
 	c.Data["Bid"] = bid
 
 	r, err := db.MailById(id)
-	if err == nil {
-		c.Data["Mail"] = r
+	if err != nil {
+		c.Handle(http.StatusInternalServerError, "MailById", err)
+		return
 	}
+	c.Data["Mail"] = r
 
 	contentData, err := db.MailContentRead(r.Uid, id)
 	if err != nil {
@@ -385,8 +413,16 @@ func ContentAttach(c *context.Context) {
 	c.Data["ParseMail"] = email
 
 	attachFile, err := ioutil.ReadAll(email.Attachments[aid].Data)
+	if err != nil {
+		c.Fail(-1, err.Error())
+		return
+	}
 	pathName := "/tmp/" + email.Attachments[aid].Filename
-	tools.WriteFile(pathName, string(attachFile))
+	err = tools.WriteFile(pathName, string(attachFile))
+	if err != nil {
+		c.Fail(-1, err.Error())
+		return
+	}
 
 	c.ServeFile(pathName, email.Attachments[aid].Filename)
 	os.RemoveAll(pathName)
@@ -424,10 +460,11 @@ func ApiDeleted(c *context.Context, f form.MailIDs) {
 		return
 	}
 
-	if db.MailSoftDeleteByIds(idsSlice) {
-		c.OK(c.Tr("common.success"))
-	} else {
+	err = db.MailSoftDeleteByIds(idsSlice)
+	if err != nil {
 		c.Fail(-1, c.Tr("common.fail"))
+	} else {
+		c.OK(c.Tr("common.success"))
 	}
 }
 
@@ -440,10 +477,11 @@ func ApiHardDeleted(c *context.Context, f form.MailIDs) {
 		return
 	}
 
-	if db.MailHardDeleteByIds(idsSlice) {
-		c.OK(c.Tr("common.success"))
-	} else {
+	err = db.MailHardDeleteByIds(idsSlice)
+	if err != nil {
 		c.Fail(-1, c.Tr("common.fail"))
+	} else {
+		c.OK(c.Tr("common.success"))
 	}
 }
 
@@ -455,10 +493,11 @@ func ApiRead(c *context.Context, f form.MailIDs) {
 		return
 	}
 
-	if db.MailSeenByIds(idsSlice) {
-		c.OK(c.Tr("common.success"))
-	} else {
+	err = db.MailSeenByIds(idsSlice)
+	if err != nil {
 		c.Fail(-1, c.Tr("common.fail"))
+	} else {
+		c.OK(c.Tr("common.success"))
 	}
 }
 
@@ -470,28 +509,39 @@ func ApiUnread(c *context.Context, f form.MailIDs) {
 		return
 	}
 
-	if db.MailUnSeenByIds(idsSlice) {
-		c.OK(c.Tr("common.success"))
-	} else {
+	err = db.MailUnSeenByIds(idsSlice)
+	if err != nil {
 		c.Fail(-1, c.Tr("common.fail"))
+	} else {
+		c.OK(c.Tr("common.success"))
 	}
 }
 
 func ApiStar(c *context.Context, f form.MailIDs) {
-	int64, _ := strconv.ParseInt(f.Ids, 10, 64)
-	if db.MailSetFlagsById(int64, 1) {
-		c.OK(c.Tr("common.success"))
-	} else {
+	int64ID, err := strconv.ParseInt(f.Ids, 10, 64)
+	if err != nil {
 		c.Fail(-1, c.Tr("common.fail"))
+		return
+	}
+	err = db.MailSetFlagsById(int64ID, 1)
+	if err != nil {
+		c.Fail(-1, c.Tr("common.fail"))
+	} else {
+		c.OK(c.Tr("common.success"))
 	}
 }
 
 func ApiUnStar(c *context.Context, f form.MailIDs) {
-	int64, _ := strconv.ParseInt(f.Ids, 10, 64)
-	if db.MailSetFlagsById(int64, 0) {
-		c.OK(c.Tr("common.success"))
-	} else {
+	int64ID, err := strconv.ParseInt(f.Ids, 10, 64)
+	if err != nil {
 		c.Fail(-1, c.Tr("common.fail"))
+		return
+	}
+	err = db.MailSetFlagsById(int64ID, 0)
+	if err != nil {
+		c.Fail(-1, c.Tr("common.fail"))
+	} else {
+		c.OK(c.Tr("common.success"))
 	}
 }
 
@@ -506,17 +556,23 @@ func ApiMove(c *context.Context, f form.MailIDs) {
 	}
 
 	if strings.EqualFold(dir, "deleted") {
-		if db.MailSoftDeleteByIds(idsSlice) {
-			c.OK(c.Tr("common.success"))
+		err = db.MailSoftDeleteByIds(idsSlice)
+		if err != nil {
+			c.Fail(-1, c.Tr("common.fail"))
 			return
 		}
+		c.OK(c.Tr("common.success"))
+		return
 	}
 
 	if strings.EqualFold(dir, "junk") {
-		if db.MailSetJunkByIds(idsSlice, 1) {
-			c.OK(c.Tr("common.success"))
+		err = db.MailSetJunkByIds(idsSlice, 1)
+		if err != nil {
+			c.Fail(-1, c.Tr("common.fail"))
 			return
 		}
+		c.OK(c.Tr("common.success"))
+		return
 	}
 
 	c.Fail(-1, c.Tr("common.fail"))

@@ -68,7 +68,9 @@ func getEngine() (*sql.DB, error) {
 		})
 
 		// synchronous close
-		db.Exec("PRAGMA synchronous = OFF;")
+						if res := db.Exec("PRAGMA synchronous = OFF;"); res.Error != nil {
+					return nil, res.Error
+				}
 	default:
 		return nil, errors.New("database type not found")
 	}
@@ -111,7 +113,7 @@ func Init() error {
 	// db.AutoMigrate(&Queue{})
 
 	for _, table := range Tables {
-		if db.Migrator().HasTable(table) {
+		if hasTable := db.Migrator().HasTable(table); hasTable {
 			continue
 		}
 

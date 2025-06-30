@@ -27,8 +27,8 @@ func (*MailLog) TableName() string {
 
 func LogList(page, pageSize int) ([]MailLog, error) {
 	log := make([]MailLog, 0, pageSize)
-	err := db.Limit(pageSize).Offset((page - 1) * pageSize).Order("id desc").Find(&log)
-	return log, err.Error
+	err := db.Limit(pageSize).Offset((page - 1) * pageSize).Order("id desc").Find(&log).Error
+	return log, err
 }
 
 func LogCount() int64 {
@@ -37,9 +37,9 @@ func LogCount() int64 {
 	return count
 }
 
-func LogSearchByName(opts *LogSearchOptions) (user []MailLog, _ int64, _ error) {
+func LogSearchByName(opts *LogSearchOptions) ([]MailLog, int64, error) {
 	if len(opts.Keyword) == 0 {
-		return user, 0, nil
+		return nil, 0, nil
 	}
 
 	opts.Keyword = strings.ToLower(opts.Keyword)
@@ -57,8 +57,12 @@ func LogSearchByName(opts *LogSearchOptions) (user []MailLog, _ int64, _ error) 
 	err := db.Model(&MailLog{}).
 		Where("LOWER(content) LIKE ?", searchQuery).
 		Or("LOWER(type) LIKE ?", searchQuery).
-		Find(&log)
-	return log, LogCount(), err.Error
+		Find(&log).Error
+	count := LogCount()
+	if err != nil {
+		return nil, 0, err
+	}
+	return log, count, nil
 }
 
 func LogAdd(ty, content string) error {
@@ -70,11 +74,7 @@ func LogAdd(ty, content string) error {
 	m.CreatedUnix = time.Now().Unix()
 	result := db.Save(&m)
 
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
+	return result.Error
 }
 
 func LogDeleteById(id int64) error {
@@ -83,9 +83,6 @@ func LogDeleteById(id int64) error {
 }
 
 func LogClear() error {
-	err := db.Exec("truncate table `im_log`")
-	if err.Error != nil {
-		return err.Error
-	}
-	return nil
+	result := db.Exec("truncate table `im_log`")
+	return result.Error
 }

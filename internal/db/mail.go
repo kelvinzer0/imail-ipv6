@@ -32,9 +32,7 @@ type Mail struct {
 	IsCheck bool `gorm:"default:0;comment:是否通过检查"`
 
 	Created     time.Time `gorm:"autoCreateTime;comment:创建时间"`
-	CreatedUnix int64     `gorm:"autoCreateTime;comment:创建时间:UNIX"`
 	Updated     time.Time `gorm:"autoCreateTime;comment:更新时间"`
-	UpdatedUnix int64     `gorm:"autoCreateTime;comment:更新时间:UNIX"`
 }
 
 const (
@@ -66,21 +64,26 @@ func MailCount() int64 {
 	return count
 }
 
-func MailCountWithOpts(opts *MailSearchOptions) int64 {
+func MailCountWithOpts(opts *MailSearchOptions) (int64, error) {
 	var count int64
 	dbm := db.Model(&Mail{})
 	dbm = MailSearchByNameCond(opts, dbm)
-	dbm.Where("uid=?", opts.Uid).Count(&count)
-	return count
+	err := dbm.Where("uid=?", opts.Uid).Count(&count).Error
+	return count, err
 }
 
-func MailList(page, pageSize int, opts *MailSearchOptions) ([]Mail, error) {
-	mail := make([]Mail, 0, pageSize)
+func MailList(mtype int, page, pageSize int, keyword string) ([]Mail, error) {
+	mails := make([]Mail, 0, pageSize)
 	dbm := db.Limit(pageSize).Offset((page - 1) * pageSize).Order("id desc")
+
+	opts := &MailSearchOptions{
+		Type:    mtype,
+		Keyword: keyword,
+	}
 	dbm = MailSearchByNameCond(opts, dbm)
 
-	err := dbm.Where("uid=?", opts.Uid).Find(&mail)
-	return mail, err.Error
+	err := dbm.Find(&mails).Error
+	return mails, err
 }
 
 type MailSearchOptions struct {
@@ -127,9 +130,9 @@ func MailSearchByNameCond(opts *MailSearchOptions, dbm *gorm.DB) *gorm.DB {
 	return dbm
 }
 
-func MailSearchByName(opts *MailSearchOptions) (user []Mail, _ int64, _ error) {
+func MailSearchByName(opts *MailSearchOptions) ([]Mail, int64, error) {
 	if len(opts.Keyword) == 0 {
-		return user, 0, nil
+		return nil, 0, nil
 	}
 
 	opts.Keyword = strings.ToLower(opts.Keyword)
@@ -146,57 +149,62 @@ func MailSearchByName(opts *MailSearchOptions) (user []Mail, _ int64, _ error) {
 
 	dbm := db.Model(&Mail{}).Where("LOWER(subject_index) LIKE ?", searchQuery)
 	dbm = MailSearchByNameCond(opts, dbm)
-	err := dbm.Where("uid=?", opts.Uid).Find(&email)
-	return email, MailCountWithOpts(opts), err.Error
+	err := dbm.Where("uid=?", opts.Uid).Find(&email).Error
+	count, countErr := MailCountWithOpts(opts)
+	if err != nil {
+		return nil, 0, err
+	}
+	if countErr != nil {
+		return nil, 0, countErr
+	}
+	return email, count, nil
 }
 
-func MailStatInfoForImap(uid int64, mtype int64) (int64, int64) {
+func MailStatInfoForImap(uid int64, mtype int64) (int64, int64, error) {
 	return MailStatInfo(uid, mtype)
 }
 
-func MailStatInfoForPop(uid int64) (int64, int64) {
+func MailStatInfoForPop(uid int64) (int64, int64, error) {
 	return MailStatInfo(uid, 0)
 }
 
-func MailStatInfo(uid int64, mtype int64) (int64, int64) {
+func MailStatInfo(uid int64, mtype int64) (int64, int64, error) {
 	type Result struct {
 		Count int64
 		Size  int64
 	}
 	var result Result
 	sql := fmt.Sprintf("SELECT count(uid) as count, sum(size) as size FROM `%s` WHERE uid=? and type=%d", TablePrefix("mail"), mtype)
-	num := db.Raw(sql, uid).Scan(&result)
+	res := db.Raw(sql, uid).Scan(&result)
 
-	if num.Error != nil {
-		return 0, 0
+	if res.Error != nil {
+		return 0, 0, res.Error
 	}
 
-	return result.Count, result.Size
+	return result.Count, result.Size, nil
 }
 
-func MailListForPop(uid int64) []Mail {
+func MailListForPop(uid int64) ([]Mail, error) {
 
 	var result []Mail
 	sql := fmt.Sprintf("SELECT id,size FROM `%s` WHERE uid=? and type=1 order by created_unix desc", TablePrefix("mail"))
-	_ = db.Raw(sql, uid).Find(&result)
-
-	return result
+	err := db.Raw(sql, uid).Find(&result).Error
+	return result, err
 }
 
-func MailListForImap(uid int64) []Mail {
+func MailListForImap(uid int64) ([]Mail, error) {
 
 	var result []Mail
 	sql := fmt.Sprintf("SELECT id,size FROM `%s` WHERE uid=? order by created_unix desc", TablePrefix("mail"))
-	_ = db.Raw(sql, uid).Find(&result)
-
-	return result
+	err := db.Raw(sql, uid).Find(&result).Error
+	return result, err
 }
 
-func MailSendListForStatus(status int64, limit int64) []Mail {
+func MailSendListForStatus(status int64, limit int64) ([]Mail, error) {
 	var result []Mail
 	sql := fmt.Sprintf("SELECT * FROM `%s` WHERE status=%d and type=0 and is_draft=0 order by created_unix limit %d", TablePrefix("mail"), status, limit)
-	db.Raw(sql).Find(&result)
-	return result
+	err := db.Raw(sql).Find(&result).Error
+	return result, err
 }
 
 func MailListPosForPop(uid int64, pos int64) ([]Mail, error) {
@@ -210,11 +218,11 @@ func MailListPosForPop(uid int64, pos int64) ([]Mail, error) {
 	return result, nil
 }
 
-func MailListForRspamd(limit int64) []Mail {
+func MailListForRspamd(limit int64) ([]Mail, error) {
 	var result []Mail
 	sql := fmt.Sprintf("SELECT * FROM `%s` WHERE type=1 and is_check=0 order by id desc limit %d", TablePrefix("mail"), limit)
-	db.Raw(sql).Find(&result)
-	return result
+	err := db.Raw(sql).Find(&result).Error
+	return result, err
 }
 
 func MailListAllForPop(uid int64) ([]Mail, error) {
@@ -257,20 +265,19 @@ func MailPosContentForPop(uid int64, pos int64) (string, int, error) {
 	return content, result[0].Size, nil
 }
 
-func MailDeleteById(id int64, status int64) bool {
+func MailDeleteById(id int64, status int64) error {
 
 	var result []Mail
 	sql := fmt.Sprintf("SELECT id,uid FROM `%s` WHERE is_delete=1 and id='%d' order by id limit 1", TablePrefix("mail"), id)
 	ret := db.Raw(sql).Scan(&result)
 	if ret.Error == nil {
 		if len(result) > 0 && status == 1 {
-			MailHardDeleteById(result[0].Uid, id)
-			return true
+			return MailHardDeleteById(result[0].Uid, id)
 		}
 	}
 
-	db.Model(&Mail{}).Where("id = ?", id).Update("is_delete", status)
-	return true
+	err := db.Model(&Mail{}).Where("id = ?", id).Update("is_delete", status).Error
+	return err
 }
 
 // 用过ID获取邮件的全部信息
@@ -280,104 +287,86 @@ func MailById(id int64) (Mail, error) {
 	return m, result.Error
 }
 
-func MailSoftDeleteById(id int64) bool {
-	db.Model(&Mail{}).Where("id = ?", id).Update("is_delete", 1)
-	return true
+func MailSoftDeleteById(id int64) error {
+	err := db.Model(&Mail{}).Where("id = ?", id).Update("is_delete", 1).Error
+	return err
 }
 
-func MailSoftDeleteByIds(ids []int64) bool {
+func MailSoftDeleteByIds(ids []int64) error {
 	err := db.Model(&Mail{}).Where("id IN  ?", ids).Update("is_delete", 1).Error
-	if err != nil {
-		return false
-	}
-	return true
+	return err
 }
 
 // TODO:批量硬删除邮件数据
-func MailHardDeleteByIds(ids []int64) bool {
+func MailHardDeleteByIds(ids []int64) error {
 	for _, id := range ids {
 
 		mList, err := MailById(id)
 		if err != nil {
-			return false
+			return err
 		}
 
 		if mList.IsDelete {
-			if !MailHardDeleteById(mList.Uid, id) {
-				return false
+			if err := MailHardDeleteById(mList.Uid, id); err != nil {
+				return err
 			}
 		}
 
 	}
-	return true
+	return nil
 }
 
-func MailHardDeleteById(uid, mid int64) bool {
+func MailHardDeleteById(uid, mid int64) error {
 	err := db.Where("id = ?", mid).Delete(&Mail{}).Error
 	if err != nil {
-		return false
+		return err
 	}
 	return MailContentDelete(uid, mid)
 }
 
-func MailSeenById(id int64) bool {
+func MailSeenById(id int64) error {
 	ids := []int64{id}
 	return MailSeenByIds(ids)
 }
 
-func MailSeenByIds(ids []int64) bool {
+func MailSeenByIds(ids []int64) error {
 	err := db.Model(&Mail{}).Where("id IN  ?", ids).Update("is_read", 1).Error
-	if err != nil {
-		return false
-	}
-	return true
+	return err
 }
 
-func MailUnSeenById(id int64) bool {
+func MailUnSeenById(id int64) error {
 	err := db.Model(&Mail{}).Where("id = ?", id).Update("is_read", 0).Error
-	if err != nil {
-		return false
-	}
-	return true
+	return err
 }
 
-func MailUnSeenByIds(ids []int64) bool {
+func MailUnSeenByIds(ids []int64) error {
 	err := db.Model(&Mail{}).Where("id IN  ?", ids).Update("is_read", 0).Error
-	if err != nil {
-		return false
-	}
-	return true
+	return err
 }
 
-func MailSetFlagsById(id int64, status int64) bool {
+func MailSetFlagsById(id int64, status int64) error {
 	err := db.Model(&Mail{}).Where("id = ?", id).Update("is_flags", status).Error
-	if err != nil {
-		return false
-	}
-	return true
+	return err
 }
 
-func MailSetJunkById(id int64, status int64) bool {
-	db.Model(&Mail{}).Where("id = ?", id).Update("is_junk", status)
-	return true
+func MailSetJunkById(id int64, status int64) error {
+	err := db.Model(&Mail{}).Where("id = ?", id).Update("is_junk", status).Error
+	return err
 }
 
-func MailSetJunkByIds(ids []int64, status int64) bool {
+func MailSetJunkByIds(ids []int64, status int64) error {
 	err := db.Model(&Mail{}).Where("id IN  ?", ids).Update("is_junk", status).Error
-	if err != nil {
-		return false
-	}
-	return true
+	return err
 }
 
-func MailSetIsCheckById(id int64, status int64) bool {
-	db.Model(&Mail{}).Where("id = ?", id).Update("is_check", status)
-	return true
+func MailSetIsCheckById(id int64, status int64) error {
+	err := db.Model(&Mail{}).Where("id = ?", id).Update("is_check", status).Error
+	return err
 }
 
-func MailSetStatusById(id int64, status int64) bool {
-	db.Model(&Mail{}).Where("id = ?", id).Update("status", status)
-	return true
+func MailSetStatusById(id int64, status int64) error {
+	err := db.Model(&Mail{}).Where("id = ?", id).Update("status", status).Error
+	return err
 }
 
 func MailPushSend(uid int64, mail_from string, mail_to string, content string, is_draft bool) (int64, error) {
@@ -415,20 +404,22 @@ func MailUpdate(id int64, uid int64, mtype int, mail_from string, mail_to string
 
 	m.UpdatedUnix = time.Now().Unix()
 	m.CreatedUnix = time.Now().Unix()
-	result := db.Save(&m)
+	result := tx.Save(&m)
 
 	if result.Error != nil {
 		tx.Rollback()
+		return 0, result.Error
 	}
 
 	err := MailContentWrite(uid, m.Id, content)
 	if err != nil {
 		tx.Rollback()
+		return 0, err
 	}
 
 	tx.Commit()
 
-	return m.Id, result.Error
+	return m.Id, nil
 }
 
 func MailPush(uid int64, mtype int, mail_from string, mail_to string, content string, status int, is_draft bool) (int64, error) {
@@ -459,17 +450,19 @@ func MailPush(uid int64, mtype int, mail_from string, mail_to string, content st
 	m.Created = time.Now()
 	m.UpdatedUnix = time.Now().Unix()
 	m.CreatedUnix = time.Now().Unix()
-	result := db.Create(&m)
+	result := tx.Create(&m)
 
 	if result.Error != nil {
 		tx.Rollback()
+		return 0, result.Error
 	}
 
 	err := MailContentWrite(m.Uid, m.Id, content)
 	if err != nil {
 		tx.Rollback()
+		return 0, err
 	}
 
 	tx.Commit()
-	return m.Id, result.Error
+	return m.Id, nil
 }

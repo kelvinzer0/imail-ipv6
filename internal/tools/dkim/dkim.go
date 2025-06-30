@@ -17,17 +17,17 @@ import (
 
 func makeRsa() ([]byte, []byte, error) {
 	privatekey, err := rsa.GenerateKey(rand.Reader, 2048)
-	if err == nil {
-		var publickey *rsa.PublicKey
-		publickey = &privatekey.PublicKey
-		Priv := x509.MarshalPKCS1PrivateKey(privatekey)
-		Pub, err := x509.MarshalPKIXPublicKey(publickey)
-
-		if err == nil {
-			return Priv, Pub, nil
-		}
+	if err != nil {
+		return nil, nil, err
 	}
-	return []byte{}, []byte{}, err
+
+	publickey := &privatekey.PublicKey
+	Priv := x509.MarshalPKCS1PrivateKey(privatekey)
+	Pub, err := x509.MarshalPKIXPublicKey(publickey)
+	if err != nil {
+		return nil, nil, err
+	}
+	return Priv, Pub, nil
 }
 
 func CheckDomainARecord(domain string) error {
@@ -83,7 +83,10 @@ func MakeDkimFile(path, domain string) (string, error) {
 	defalutValFile := fmt.Sprintf("%s/dkim/%s/default.val", path, domain)
 
 	if tools.IsExist(priFile) {
-		pubContent, _ := tools.ReadFile(defalutTextFile)
+		pubContent, err := tools.ReadFile(defalutTextFile)
+		if err != nil {
+			return "", err
+		}
 		return pubContent, nil
 	}
 
@@ -112,9 +115,15 @@ func MakeDkimFile(path, domain string) (string, error) {
 	pubContent := fmt.Sprintf("default._domainkey\tIN\tTXT\t(\r\nv=DKIM1;k=rsa;p=%s\r\n)\r\n----- DKIM key default for %s", pub, domain)
 
 	err = tools.WriteFile(defalutTextFile, pubContent)
+	if err != nil {
+		return "", err
+	}
 	err = tools.WriteFile(defalutValFile, fmt.Sprintf("v=DKIM1;k=rsa;p=%s", pub))
+	if err != nil {
+		return "", err
+	}
 
-	return pubContent, err
+	return pubContent, nil
 }
 
 func MakeDkimConfFile(path, domain string) (string, error) {
@@ -138,7 +147,10 @@ func MakeDkimConfFile(path, domain string) (string, error) {
 }
 
 func GetDomainDkimVal(path, domain string) (string, error) {
-	_, _ = MakeDkimConfFile(path, domain)
+	_, err := MakeDkimConfFile(path, domain)
+	if err != nil {
+		return "", err
+	}
 	defalutValFile := fmt.Sprintf("%s/dkim/%s/default.val", path, domain)
 	pubContentRecord, err := tools.ReadFile(defalutValFile)
 	return pubContentRecord, err

@@ -21,9 +21,7 @@ type User struct {
 	IsAdmin  bool
 
 	Created     time.Time `gorm:"autoCreateTime;comment:创建时间"`
-	CreatedUnix int64     `gorm:"autoCreateTime;comment:创建时间"`
 	Updated     time.Time `gorm:"autoCreateTime;comment:更新时间"`
-	UpdatedUnix int64     `gorm:"autoCreateTime;comment:更新时间"`
 }
 
 func (User) TableName() string {
@@ -46,7 +44,7 @@ func CreateUser(u *User) (err error) {
 
 	u.Nick = u.Name
 	u.Password = tools.Md5(tools.Md5(u.Password) + u.Salt)
-	if data.Error != nil {
+	if data.Error == gorm.ErrRecordNotFound {
 		result := db.Create(u)
 		return result.Error
 	}
@@ -109,7 +107,7 @@ func UsersVaildCount() int64 {
 	return count
 }
 
-func LoginWithCode(name string, code string) (bool, int64) {
+func LoginWithCode(name string, code string) (bool, error) {
 
 	list := strings.SplitN(name, "@", 2)
 
@@ -117,38 +115,41 @@ func LoginWithCode(name string, code string) (bool, int64) {
 
 	err := db.First(&u, "name = ?", list[0]).Error
 	if err != nil {
-		return false, 0
+		return false, err
 	}
 
 	if u.Code == code {
-		return true, u.Id
+		return true, nil
 	}
 
-	return false, 0
+	return false, errors.New("invalid code")
 }
 
-func LoginByUserPassword(name string, password string) (bool, int64) {
+func LoginByUserPassword(name string, password string) (bool, error) {
 	var u User
 	err := db.First(&u, "name = ?", name).Error
 
 	if err != nil {
-		return false, 0
+		return false, err
 	}
 
 	inputPwd := tools.Md5(tools.Md5(password) + u.Salt)
 	if inputPwd == u.Password {
-		return true, u.Id
+		return true, nil
 	}
-	return false, 0
+	return false, errors.New("invalid password")
 }
 
-func UserCheckIsExist(name string) bool {
+func UserCheckIsExist(name string) (bool, error) {
 	var user User
 	err := db.First(&user, "name = ?", name).Error
-	if err == nil {
-		return true
+	if err == gorm.ErrRecordNotFound {
+		return false, nil
 	}
-	return false
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // UpdateUser updates user's information.
@@ -156,9 +157,9 @@ func UpdateUser(u *User) error {
 	return db.Save(u).Error
 }
 
-func UserUpdateTokenGetByName(name string, token string) bool {
-	db.Model(&User{}).Where("name = ?", name).Update("token", token)
-	return true
+func UserUpdateTokenGetByName(name string, token string) error {
+	err := db.Model(&User{}).Where("name = ?", name).Update("token", token).Error
+	return err
 }
 
 func UserUpdateTokenGetById(id int64, token string) error {
@@ -166,9 +167,9 @@ func UserUpdateTokenGetById(id int64, token string) error {
 	return r.Error
 }
 
-func UserUpdateCodeGetByName(name string, code string) bool {
-	db.Model(&User{}).Where("name = ?", name).Update("code", code)
-	return true
+func UserUpdateCodeGetByName(name string, code string) error {
+	err := db.Model(&User{}).Where("name = ?", name).Update("code", code).Error
+	return err
 }
 
 func UserUpdateCodeGetById(id int64, code string) error {
@@ -196,13 +197,16 @@ func UserGetAdmin() (User, error) {
 	err := db.Model(&User{}).
 		Where("is_active=?", 1).
 		Where("is_admin=?", 1).
-		Find(&user)
-	return user, err.Error
+		Find(&user).Error
+	return user, err
 }
 
 func UserGetAdminForName() (string, error) {
 	u, err := UserGetAdmin()
-	return u.Name, err
+	if err != nil {
+		return "", err
+	}
+	return u.Name, nil
 }
 
 func UserGetById(id int64) (User, error) {

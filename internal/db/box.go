@@ -23,28 +23,34 @@ func (Box) TableName() string {
 	return TablePrefix("user_box")
 }
 
-func BoxUserList(uid int64) (int64, int64) {
-
-	var resultBox Box
+func BoxUserList(uid int64) (count int64, size int64, err error) {
+	var result struct {
+		Count int64
+		Size  int64
+	}
 	sql := fmt.Sprintf("SELECT count(uid) as count, sum(size) as size FROM `%s` WHERE uid=?", TablePrefix("user_box"))
-	db.Raw(sql, uid).Find(&resultBox)
-
-	// fmt.Println(uid, num, resultBox)
-	return 0, 0
+	res := db.Raw(sql, uid).Scan(&result)
+	if res.Error != nil {
+		return 0, 0, res.Error
+	}
+	return result.Count, result.Size, nil
 }
 
-func BoxUserTotal(uid int64) (int64, int64) {
-
-	var resultBox Box
+func BoxUserTotal(uid int64) (count int64, size int64, err error) {
+	var result struct {
+		Count int64
+		Size  int64
+	}
 	sql := fmt.Sprintf("SELECT count(uid) as count, sum(size) as size FROM `%s` WHERE uid=?", TablePrefix("user_box"))
-	db.Raw(sql, uid).Find(&resultBox)
-
-	// fmt.Println(num, resultBox)
-	return 0, 0
+	res := db.Raw(sql, uid).Scan(&result)
+	if res.Error != nil {
+		return 0, 0, res.Error
+	}
+	return result.Count, result.Size, nil
 }
 
 // Get statistics under classification
-func BoxUserMessageCountByClassName(uid int64, className string) (int64, int64) {
+func BoxUserMessageCountByClassName(uid int64, className string) (int64, int64, error) {
 	type Result struct {
 		Count int64
 		Size  int64
@@ -66,7 +72,7 @@ func BoxUserMessageCountByClassName(uid int64, className string) (int64, int64) 
 	}
 
 	if strings.EqualFold(className, "Drafts") {
-		sql = fmt.Sprintf("%s and is_delete='0' and is_draft='1'", sql)
+		sql = fmt.Sprintf("%s and is_draft='1' ", sql)
 	}
 
 	if strings.EqualFold(className, "Junk") {
@@ -76,10 +82,10 @@ func BoxUserMessageCountByClassName(uid int64, className string) (int64, int64) 
 	// fmt.Println("BoxUserMessageCountByClassName:", sql, className)
 	num := db.Raw(sql, uid).Scan(&result)
 	if num.Error != nil {
-		return 0, 0
+		return 0, 0, num.Error
 	}
 
-	return result.Count, result.Size
+	return result.Count, result.Size, nil
 }
 
 // // Paging List of Imap Protocol

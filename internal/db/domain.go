@@ -16,9 +16,7 @@ type Domain struct {
 	Dmarc       bool      `gorm:"comment:DMARC记录"`
 	IsDefault   bool      `gorm:"comment:是否默认"`
 	Created     time.Time `gorm:"autoCreateTime;comment:创建时间"`
-	CreatedUnix int64     `gorm:"autoCreateTime;comment:创建时间"`
 	Updated     time.Time `gorm:"autoCreateTime;comment:更新时间"`
-	UpdatedUnix int64     `gorm:"autoCreateTime;comment:更新时间"`
 }
 
 func (*Domain) TableName() string {
@@ -27,7 +25,7 @@ func (*Domain) TableName() string {
 
 func DomainCreate(d *Domain) (err error) {
 	data := db.First(d, "domain = ?", d.Domain)
-	if data.Error != nil {
+	if data.Error == gorm.ErrRecordNotFound {
 		result := db.Create(d)
 		return result.Error
 	}
@@ -48,8 +46,8 @@ func DomainVaildList(page, pageSize int) ([]Domain, error) {
 		Where("spf=?", 1).
 		Where("dkim=?", 1).
 		Where("dmarc=?", 1).
-		Find(&domain)
-	return domain, err.Error
+		Find(&domain).Error
+	return domain, err
 }
 
 func DomainVaild(name string) bool {
@@ -70,8 +68,8 @@ func DomainVaild(name string) bool {
 func DomainList(page, pageSize int) ([]Domain, error) {
 	domain := make([]Domain, 0, pageSize)
 	dbm := db.Limit(pageSize).Offset((page - 1) * pageSize).Order("id desc")
-	err := dbm.Find(&domain)
-	return domain, err.Error
+	err := dbm.Find(&domain).Error
+	return domain, err
 }
 
 func DomainDeleteByName(name string) error {
@@ -96,14 +94,14 @@ func DomainUpdateById(id int64, d Domain) error {
 }
 
 func DomainSetDefaultOnlyOne(id int64) error {
-	result := db.Model(&Domain{}).Where("1 = ?", 1).Update("is_default", 0).Error
-	if result != nil {
-		return err
+	result := db.Model(&Domain{}).Where("1 = ?", 1).Update("is_default", 0)
+	if result.Error != nil {
+		return result.Error
 	}
 
-	result = db.Model(&Domain{}).Where("id = ?", id).Update("is_default", 1).Error
-	if result != nil {
-		return err
+	result = db.Model(&Domain{}).Where("id = ?", id).Update("is_default", 1)
+	if result.Error != nil {
+		return result.Error
 	}
 	return nil
 }

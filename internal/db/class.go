@@ -48,14 +48,9 @@ func ClassGetIdByName(uid int64, name string) (int64, error) {
 	sql := fmt.Sprintf("SELECT id,name,flags FROM `%s` WHERE (`type`=0 or uid=?) and `name`=?", TablePrefix("class"))
 	result := db.Raw(sql, uid, name).Find(&class)
 
-	fmt.Println(result)
+	if result.Error != nil {
+		return 0, result.Error
+	}
 
-	// if err == nil && num > 0 {
-	// 	id, err := strconv.ParseInt(class.Id, 10, 64)
-	// 	if err == nil {
-	// 		return id, nil
-	// 	}
-	// 	return id, err
-	// }
-	return 0, nil
+	return class.Id, nil
 }

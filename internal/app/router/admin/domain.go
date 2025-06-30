@@ -105,137 +105,116 @@ func InfoDomain(c *context.Context) {
 
 func CheckDomain(c *context.Context) {
 	id := c.ParamsInt64(":id")
-	d, _ := db.DomainGetById(id)
+	d, err := db.DomainGetById(id)
+	if err != nil {
+		c.Flash.Error(c.Tr("common.fail"))
+		c.Redirect(conf.Web.Subpath + "/admin/domain")
+		return
+	}
 	domain := d.Domain
 
-	//MX
-	if !d.Mx {
-		mx, _ := net.LookupMX(domain)
-		// fmt.Println("mx:", mx[0])
-		lenMx := len(mx)
-		if 0 == lenMx {
-			d.Mx = false
-		} else {
-			if strings.Contains(mx[0].Host, ".") {
-				d.Mx = true
-
-				//A
-				if !d.A {
-					host := strings.Trim(mx[0].Host, ".")
-					err := dkim.CheckDomainARecord(host)
-					if err == nil {
-						d.A = true
-					} else {
-						d.A = false
-					}
-				}
-
-				if !d.AAAA {
-					host := strings.Trim(mx[0].Host, ".")
-					err := dkim.CheckDomainAAAARecord(host)
-					if err == nil {
-						d.AAAA = true
-					} else {
-						d.AAAA = false
-					}
-				}
-			}
-		}
+	mxRecords, err := net.LookupMX(domain)
+	if err != nil {
+		c.Flash.Error(c.Tr("admin.domain.check_fail", domain, err.Error()))
+		c.Redirect(conf.Web.Subpath + "/admin/domain")
+		return
 	}
 
-	//A
-	if !d.A {
-		mx, _ := net.LookupMX(domain)
+	// MX Record Check
+	if len(mxRecords) > 0 && strings.Contains(mxRecords[0].Host, ".") {
+		d.Mx = true
+	} else {
+		d.Mx = false
+	}
 
-		if len(mx) > 1 {
-			host := strings.Trim(mx[0].Host, ".")
-			// fmt.Println("a:", host)
-			err := dkim.CheckDomainARecord(host)
-			// fmt.Println("a err:", err)
-			if err == nil {
-				d.A = true
-			} else {
-				d.A = false
-			}
+	// A Record Check
+	if d.Mx {
+		host := strings.Trim(mxRecords[0].Host, ".")
+		err = dkim.CheckDomainARecord(host)
+		if err == nil {
+			d.A = true
 		} else {
 			d.A = false
 		}
+	} else {
+		d.A = false
 	}
 
-	//AAAA
-	if !d.AAAA {
-		mx, _ := net.LookupMX(domain)
-
-		if len(mx) > 1 {
-			host := strings.Trim(mx[0].Host, ".")
-			// fmt.Println("aaaa:", host)
-			err := dkim.CheckDomainAAAARecord(host)
-			// fmt.Println("aaaa err:", err)
-			if err == nil {
-				d.AAAA = true
-			} else {
-				d.AAAA = false
-			}
+	// AAAA Record Check
+	if d.Mx {
+		host := strings.Trim(mxRecords[0].Host, ".")
+		err = dkim.CheckDomainAAAARecord(host)
+		if err == nil {
+			d.AAAA = true
 		} else {
 			d.AAAA = false
 		}
-	}
-
-	//DMARC
-	if !d.Dmarc {
-		dmarcRecord, _ := net.LookupTXT(fmt.Sprintf("_dmarc.%s", domain))
-		// fmt.Println("dmarcRecord:", dmarcRecord)
-		if 0 != len(dmarcRecord) {
-			for _, dmarcDomainRecord := range dmarcRecord {
-				if strings.Contains(strings.ToLower(dmarcDomainRecord), "v=dmarc1") {
-					d.Dmarc = true
-				}
-			}
-		}
-	}
-
-	//spf
-	if !d.Spf {
-		spfRecord, _ := net.LookupTXT(domain)
-		// fmt.Println("spfRecord:", spfRecord)
-		if 0 != len(spfRecord) {
-			for _, spfRecordContent := range spfRecord {
-				if strings.Contains(strings.ToLower(spfRecordContent), "v=spf1") {
-					d.Spf = true
-				}
-			}
-		}
-	}
-
-	//dkim check
-	if !d.Dkim {
-		dataDir := conf.Web.Subpath + conf.Web.AppDataPath
-		dkimRecord, _ := net.LookupTXT(fmt.Sprintf("default._domainkey.%s", domain))
-		// fmt.Println("dkimRecord:", dkimRecord)
-		if 0 != len(dkimRecord) {
-			dkimContent, _ := dkim.GetDomainDkimVal(dataDir, domain)
-			for _, dkimDomainContent := range dkimRecord {
-				if strings.EqualFold(dkimContent, dkimDomainContent) {
-					d.Dkim = true
-				}
-			}
-		}
-	}
-
-	_ = db.DomainUpdateById(id, d)
-
-	c.Flash.Success(c.Tr("admin.domain.check_success", d.Domain))
-	c.Redirect(conf.Web.Subpath + "/admin/domain")
-}
-
-func SetDefaultDomain(c *context.Context) {
-	id := c.ParamsInt64(":id")
-	d, _ := db.DomainGetById(id)
-	err := db.DomainSetDefaultOnlyOne(id)
-	if err != nil {
-		c.Flash.Error(c.Tr("admin.domain.set_default_fail", d.Domain))
 	} else {
-		c.Flash.Success(c.Tr("admin.domain.set_default_success", d.Domain))
+		d.AAAA = false
+	}
+
+	// DMARC Check
+	dmarcRecord, err := net.LookupTXT(fmt.Sprintf("_dmarc.%s", domain))
+	if err != nil {
+		// Log the error but don't fail the entire check
+		fmt.Printf("Error looking up DMARC record for %s: %v\n", domain, err)
+	}
+	if len(dmarcRecord) > 0 {
+		for _, rec := range dmarcRecord {
+			if strings.Contains(strings.ToLower(rec), "v=dmarc1") {
+				d.Dmarc = true
+				break
+			}
+		}
+	} else {
+		d.Dmarc = false
+	}
+
+	// SPF Check
+	spfRecord, err := net.LookupTXT(domain)
+	if err != nil {
+		// Log the error but don't fail the entire check
+		fmt.Printf("Error looking up SPF record for %s: %v\n", domain, err)
+	}
+	if len(spfRecord) > 0 {
+		for _, rec := range spfRecord {
+			if strings.Contains(strings.ToLower(rec), "v=spf1") {
+				d.Spf = true
+				break
+			}
+		}
+	} else {
+		d.Spf = false
+	}
+
+	// DKIM Check
+	dataDir := conf.Web.Subpath + conf.Web.AppDataPath
+	dkimRecord, err := net.LookupTXT(fmt.Sprintf("default._domainkey.%s", domain))
+	if err != nil {
+		// Log the error but don't fail the entire check
+		fmt.Printf("Error looking up DKIM record for %s: %v\n", domain, err)
+	}
+	if len(dkimRecord) > 0 {
+		dkimContent, err := dkim.GetDomainDkimVal(dataDir, domain)
+		if err != nil {
+			fmt.Printf("Error getting DKIM value for %s: %v\n", domain, err)
+		} else {
+			for _, rec := range dkimRecord {
+				if strings.EqualFold(dkimContent, rec) {
+					d.Dkim = true
+					break
+				}
+			}
+		}
+	} else {
+		d.Dkim = false
+	}
+
+	err = db.DomainUpdateById(id, d)
+	if err != nil {
+		c.Flash.Error(c.Tr("admin.domain.update_fail", d.Domain, err.Error()))
+	} else {
+		c.Flash.Success(c.Tr("admin.domain.check_success", d.Domain))
 	}
 	c.Redirect(conf.Web.Subpath + "/admin/domain")
 }

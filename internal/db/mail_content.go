@@ -54,11 +54,18 @@ func MailContentReadHardDisk(uid int64, mid int64) (string, error) {
 	dataPath := path.Join(conf.Web.AppDataPath, "mail", "user"+strconv.FormatInt(uid, 10), string(strconv.FormatInt(mid, 10)[0]))
 
 	if !tools.IsExist(dataPath) {
-		os.MkdirAll(dataPath, os.ModePerm)
+		err := os.MkdirAll(dataPath, os.ModePerm)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	emailFile := fmt.Sprintf("%s/%d.eml", dataPath, mid)
-	return tools.ReadFile(emailFile)
+	content, err := tools.ReadFile(emailFile)
+	if err != nil {
+		return "", err
+	}
+	return content, nil
 }
 
 func MailContentWrite(uid int64, mid int64, content string) error {
@@ -81,11 +88,18 @@ func MailContentWriteHardDisk(uid int64, mid int64, content string) error {
 	dataPath := MailContentDir(uid, mid)
 
 	if !tools.IsExist(dataPath) {
-		os.MkdirAll(dataPath, os.ModePerm)
+		err := os.MkdirAll(dataPath, os.ModePerm)
+		if err != nil {
+			return err
+		}
 	}
 
 	emailFile := fmt.Sprintf("%s/%d.eml", dataPath, mid)
-	return tools.WriteFile(emailFile, content)
+	err := tools.WriteFile(emailFile, content)
+	if err != nil {
+		return err
+	}
+	return nil
 
 }
 
@@ -106,13 +120,16 @@ func MailContentDeleteDb(mid int64) bool {
 	return true
 }
 
-func MailContentDeleteHardDisk(uid int64, mid int64) bool {
+func MailContentDeleteHardDisk(uid int64, mid int64) error {
 	dataPath := MailContentDir(uid, mid)
 
 	emailFile := fmt.Sprintf("%s/%d.eml", dataPath, mid)
 	if tools.IsExist(emailFile) {
-		os.RemoveAll(emailFile)
-		return true
+		err := os.RemoveAll(emailFile)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
-	return false
+	return nil
 }
