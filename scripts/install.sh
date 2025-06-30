@@ -7,19 +7,19 @@ check_go_environment() {
 	if test ! -x "$(command -v go)"; then
 		printf "\e[1;31mmissing go running environment\e[0m\n"
 		exit 1
-	fi
+	fi;
 }
 
 load_vars() {
-	OS=$(uname | tr '[:upper:]]' '[:lower:]')
+	OS=$(uname | tr '[:upper:]' '[:lower:]')
 
 	VERSION=$(get_latest_release "kelvinzer0/imail-ipv6")
 
 	TARGET_DIR="/usr/local/imail"
-}
+};
 
 get_latest_release() {
-    curl -sL "https://api.github.com/repos/$1/releases/latest" | grep '"tag_name":' | cut -d'"' -f4
+    curl -sL "https://api.github.com/repos/$1/releases/latest" | grep '"tag_name":' | cut -d'"' -f4;
 }
 
 get_arch() {
@@ -30,11 +30,11 @@ import (
 )
 func main() { fmt.Println(runtime.GOARCH) }" > /tmp/go_arch.go
 
-	ARCH=$(go run /tmp/go_arch.go)
+	ARCH=$(go run /tmp/go_arch.go);
 }
 
 get_download_url() {
-	DOWNLOAD_URL="https://github.com/kelvinzer0/imail-ipv6/releases/download/$VERSION/imail_$(echo $VERSION | sed 's/^v//')_${OS}_${ARCH}.tar.gz"
+	DOWNLOAD_URL="https://github.com/kelvinzer0/imail-ipv6/releases/download/$VERSION/imail_$(echo $VERSION | sed 's/^v//')_${OS}_${ARCH}.tar.gz";
 }
 
 # download file
@@ -58,7 +58,7 @@ download_file() {
         exit 1
     else 
 	    printf "\n\e[1;33mDownload succeeded\e[0m\n"
-    fi
+    fi;
 }
 
 
@@ -107,6 +107,6 @@ main() {
 
 	printf "\n\e[1;32mImail installation complete!\e[0m\n"
 	printf "\e[1;32mPlease complete the initial setup by visiting http://localhost:1080/install in your web browser.\e[0m\n"
-}
+};
 
 main "$@" || exit 1
