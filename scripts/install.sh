@@ -105,7 +105,7 @@ main() {
 	fi
 
 	# Create systemd service file
-	sed "s:{APP_PATH}:${TARGET_DIR}:g" "$TARGET_DIR/scripts/init.d/imail.service.tpl" > /tmp/imail.service.debug
+	sed "s:{APP_PATH}:${TARGET_DIR}:g" "$TARGET_DIR/scripts/init.d/imail.service.tpl" | sudo tee /etc/systemd/system/imail.service > /dev/null
 
 	systemctl daemon-reload
 	systemctl restart imail
