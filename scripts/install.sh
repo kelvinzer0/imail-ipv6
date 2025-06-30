@@ -75,8 +75,7 @@ main() {
 	if [ -z "$local_tar_gz" ]; then
 		get_arch
 		get_download_url
-		DOWNLOAD_FILE="$(mktemp).tar.gz"
-		download_file "$DOWNLOAD_URL" "$DOWNLOAD_FILE"
+		DOWNLOAD_FILE="$(mktemp).tar.gz"if [ -f "$DOWNLOAD_FILE" ]; thenprintf "\n\e[1;33mDownload skipped, file already exists: %s\e[0m\n" "$DOWNLOAD_FILE"else	download_file "$DOWNLOAD_URL" "$DOWNLOAD_FILE"fi
 	else
 		DOWNLOAD_FILE="$local_tar_gz"
 		if [ ! -f "$DOWNLOAD_FILE" ]; then
