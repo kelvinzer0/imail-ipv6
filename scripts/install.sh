@@ -33,7 +33,7 @@ func main() { fmt.Println(runtime.GOARCH) }" > /tmp/go_arch.go
 }
 
 get_download_url() {
-	DOWNLOAD_URL="https://github.com/kelvinzer0/imail-ipv6/releases/download/$VERSION/imail_${VERSION}_${OS}_${ARCH}.tar.gz"
+	DOWNLOAD_URL="https://github.com/kelvinzer0/imail-ipv6/releases/download/$VERSION/imail_$(echo $VERSION | sed 's/^v//')_${OS}_${ARCH}.tar.gz"
 }
 
 # download file
