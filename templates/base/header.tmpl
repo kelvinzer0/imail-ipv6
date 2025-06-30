@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
 	{{if not .PageIsAdmin}}
-		<meta name="author" content="midoks" />
+		<meta name="author" content="kelvinzer0" />
 		<meta name="description" content="imail is a painless self-hosted email service" />
 		<meta name="keywords" content="go, imail, self-hosted, email">
 	{{end}}
@@ -138,7 +138,7 @@
 										<a class="{{if .PageIsUserSettings}}active{{end}} item" href="{{AppSubURL}}/user/settings">
 											<i class="octicon octicon-settings"></i> {{.i18n.Tr "your_settings"}}
 										</a>
-										<a class="item" target="_blank" rel="noopener noreferrer" href="https://github.com/midoks/imail/wiki" rel="noreferrer">
+										<a class="item" target="_blank" rel="noopener noreferrer" href="https://github.com/kelvinzer0/imail/wiki" rel="noreferrer">
 											<i class="octicon octicon-question"></i> {{.i18n.Tr "help"}}
 										</a>
 										{{if .IsAdmin}}
@@ -163,7 +163,7 @@
 
 						{{else}}
 
-							<a class="item" target="_blank" rel="noopener noreferrer" href="https://github.com/midoks/imail/wiki" rel="noreferrer">{{.i18n.Tr "help"}}</a>
+							<a class="item" target="_blank" rel="noopener noreferrer" href="https://github.com/kelvinzer0/imail/wiki" rel="noreferrer">{{.i18n.Tr "help"}}</a>
 							<div class="right menu">
 								{{if .ShowRegistrationButton}}
 									<a class="item{{if .PageIsSignUp}} active{{end}}" href="{{AppSubURL}}/user/sign_up">

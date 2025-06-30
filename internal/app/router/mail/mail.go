@@ -8,14 +8,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/midoks/imail/internal/app/context"
-	"github.com/midoks/imail/internal/app/form"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/tools"
-	tmail "github.com/midoks/imail/internal/tools/mail"
-	"github.com/midoks/imail/internal/tools/paginater"
-	"github.com/midoks/mcopa"
+	"github.com/kelvinzer0/imail/internal/app/context"
+	"github.com/kelvinzer0/imail/internal/app/form"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/tools"
+	tmail "github.com/kelvinzer0/imail/internal/tools/mail"
+	"github.com/kelvinzer0/imail/internal/tools/paginater"
+	"github.com/kelvinzer0/mcopa"
 )
 
 const (

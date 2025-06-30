@@ -11,7 +11,7 @@ Received: by filterdrecv-7bc86b958d-9xw7z with SMTP id filterdrecv-7bc86b958d-9x
         2021-12-25 17:06:03.248552816 +0000 UTC m=+9917148.116332007
 Received: from kp3.kennedyprojects.com (unknown)
 	by ismtpd0177p1iad2.sendgrid.net (SG) with ESMTP id uBvcNDJRQCWRRIa_OBM02A
-	for <midoks@163.com>; Sat, 25 Dec 2021 17:06:03.230 +0000 (UTC)
+	for <kelvinzer0@163.com>; Sat, 25 Dec 2021 17:06:03.230 +0000 (UTC)
 Received: by kp3.kennedyprojects.com (Postfix, from userid 33)
 	id 17F1D17A36D; Sat, 25 Dec 2021 12:06:03 -0500 (EST)
 Message-ID: <00638d85ff2934d8a564284f28a0fb70@linux.org>
@@ -21,7 +21,7 @@ From: "Linux.org" <info@linux.org>
 MIME-Version: 1.0
 Content-Type: multipart/alternative;
  boundary="_=_swift_1640451963_932a79c5f46b65f266bb92ef69d421ae_=_"
-X-To-Validate: 6b634707+midoks@163.com
+X-To-Validate: 6b634707+kelvinzer0@163.com
 Auto-Submitted: auto-generated
 X-SG-EID: 
  =?us-ascii?Q?ewld9OGe4KVBjC42vQbkSWplYZ8GIQnzCcti4SDb1sjRLempwL9v3tO6yBhweN?=
@@ -30,25 +30,25 @@ X-SG-EID:
  =?us-ascii?Q?pB7mzG1lsMwfa5C5mQHLYxdw2WulYUjSkKmS4fc?=
  =?us-ascii?Q?0O+dpjMRFi6hgCpVx7Kk9TKVk6kTQbqGham5+YI?=
  =?us-ascii?Q?+W2yxSyexSOGB=2F+Wg=3D?=
-To: midoks <midoks@163.com>
+To: kelvinzer0 <kelvinzer0@163.com>
 X-Entity-ID: OO4f4YhaUQxTEhKy73trGw==
 X-CM-TRANSID:T8CowABHUNd7T8dhEi4pAw--.2375S3
 Authentication-Results: mx29; spf=pass smtp.mail=bounces+12094408-e053
-	-midoks=163.com@sendgrid.net; dkim=pass header.i=@sendgrid.net
+	-kelvinzer0=163.com@sendgrid.net; dkim=pass header.i=@sendgrid.net
 X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
 	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU-AR6UUUUU
-Sender: bounces+12094408-e053-midoks=163.com@sendgrid.net
+Sender: bounces+12094408-e053-kelvinzer0=163.com@sendgrid.net
 
 
 --_=_swift_1640451963_932a79c5f46b65f266bb92ef69d421ae_=_
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: quoted-printable
 
-midoks, in order to complete your registration or reactivate your account a=
+kelvinzer0, in order to complete your registration or reactivate your account a=
 t Linux.org (https://www.linux.org/), you need to confirm your email addres=
 s by clicking the button below.
 
-Confirm your email (https://www.linux.org/account-confirmation/midoks.13240=
+Confirm your email (https://www.linux.org/account-confirmation/kelvinzer0.13240=
 9/email?c=3D83WNoRrqDru7pMFi)
 
 -----------------------------
@@ -104,13 +104,13 @@ e: collapse; background-color: #fefefe; border-radius: 2px; color: #141414;=
 elvetica,Roboto,Oxygen,Ubuntu,Cantarell,'Fira Sans','Droid Sans',sans-serif=
 ; line-height: 1.4;">
 
-<p style=3D"margin-top: 0;">midoks, in order to complete your registration =
+<p style=3D"margin-top: 0;">kelvinzer0, in order to complete your registration =
 or reactivate your account at <a href=3D"https://www.linux.org/" style=3D"c=
 olor: #2577b1; text-decoration: none;">Linux.org</a>, you need to confirm y=
 our email address by clicking the button below.</p>
 
 <p style=3D"margin-bottom: 0;"><a href=3D"https://www.linux.org/account-con=
-firmation/midoks.132409/email?c=3D83WNoRrqDru7pMFi" class=3D"button" style=
+firmation/kelvinzer0.132409/email?c=3D83WNoRrqDru7pMFi" class=3D"button" style=
 =3D"display: inline-block; padding: 5px 10px; background-color: #2577b1; bo=
 rder: none; border-radius: 4px; font-size: 13px; color: #edf6fd; text-decor=
 ation: none; white-space: nowrap;">Confirm your email</a></p>

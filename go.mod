@@ -1,4 +1,4 @@
-module github.com/midoks/imail
+module github.com/kelvinzer0/imail-ipv6
 
 go 1.16
 

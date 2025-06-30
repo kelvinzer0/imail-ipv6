@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/midoks/imail/internal/app/router"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/tools/dkim"
+	"github.com/kelvinzer0/imail/internal/app/router"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/tools/dkim"
 	"github.com/urfave/cli"
 )
 

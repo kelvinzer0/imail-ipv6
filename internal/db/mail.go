@@ -8,7 +8,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/midoks/imail/internal/tools/mail"
+	"github.com/kelvinzer0/imail/internal/tools/mail"
 )
 
 type Mail struct {

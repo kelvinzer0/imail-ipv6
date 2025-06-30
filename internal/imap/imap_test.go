@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/log"
-	"github.com/midoks/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/tools"
 )
 
 // go test -v ./internal/go test -v ./internal/imap
@@ -180,7 +180,7 @@ func imapCmd(domain string, port string, name string, password string) (bool, er
 }
 
 // func TestRunImap163(t *testing.T) {
-// 	imapCmd("imap.163.com", "143", "midoks@163.com", "mm123123")
+// 	imapCmd("imap.163.com", "143", "kelvinzer0@163.com", "mm123123")
 // }
 
 // go test -run TestRunImap

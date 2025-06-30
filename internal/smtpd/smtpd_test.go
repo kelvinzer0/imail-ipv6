@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/log"
-	"github.com/midoks/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/tools"
 )
 
 var localhostCert = []byte(`-----BEGIN CERTIFICATE-----
@@ -284,7 +284,7 @@ func T_TestSendMailLocal(t *testing.T) {
 
 	now := time.Now().Format("2006-01-02 15:04:05")
 
-	tEmail := "midoks@163.com"
+	tEmail := "kelvinzer0@163.com"
 	fEmail := "admin@cachecha.com"
 
 	content := fmt.Sprintf("From: <%s>\r\nSubject: Hello imail[%s]\r\nTo: <%s>\r\n\r\nHi! yes is test. imail ok?", fEmail, now, tEmail)
@@ -303,7 +303,7 @@ func SSL_TestSendMail(t *testing.T) {
 
 	now := time.Now().Format("2006-01-02 15:04:05")
 
-	tEmail := "midoks@163.com"
+	tEmail := "kelvinzer0@163.com"
 	fEmail := "admin@cachecha.com"
 
 	content := fmt.Sprintf("From: <%s>\r\nSubject: Hello imail[%s]\r\nTo: <%s>\r\n\r\nHi! yes is test. imail ok?", fEmail, now, tEmail)
@@ -318,7 +318,7 @@ func SSL_TestSendMail(t *testing.T) {
 
 func ReceivedMail() error {
 	now := time.Now().Format("2006-01-02 15:04:05")
-	fromEmail := "midoks@163.com"
+	fromEmail := "kelvinzer0@163.com"
 	toEmail := "admin@cachecha.com"
 
 	send := "From: =?UTF-8?B?6Zi/6YeM5LqR?= <%s>\r\nSubject: Hello imail[%s]\r\nTo: <%s>\r\n\r\nHi! yes is test. imail ok?"
@@ -343,13 +343,13 @@ func T_TestReceivedMail(t *testing.T) {
 func MailDbPush() (int64, error) {
 	revContent := `Received: from 127.0.0.1 (unknown[127.0.0.1])
 	by smtp.cachecha.com (NewMx) with SMTP id
-	for <midoks@163.com>; Tue, 28 Sep 2021 13:30:26 +0800 (CST) 
-From: <midoks@163.com>
+	for <kelvinzer0@163.com>; Tue, 28 Sep 2021 13:30:26 +0800 (CST) 
+From: <kelvinzer0@163.com>
 Subject: Hello imail[2021-09-28 13:30:26]
 To: <admin@cachecha.com>
 
 Hi! yes is test. imail ok?`
-	fid, err := db.MailPush(1, 1, "midoks@163.com", "admin@cachecha.com", revContent, 3, false)
+	fid, err := db.MailPush(1, 1, "kelvinzer0@163.com", "admin@cachecha.com", revContent, 3, false)
 	return fid, err
 }
 

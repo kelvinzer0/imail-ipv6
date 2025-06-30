@@ -3,12 +3,12 @@ package admin
 import (
 	// "strings"
 
-	"github.com/midoks/imail/internal/app/context"
-	"github.com/midoks/imail/internal/app/form"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/log"
-	"github.com/midoks/imail/internal/tools/paginater"
+	"github.com/kelvinzer0/imail/internal/app/context"
+	"github.com/kelvinzer0/imail/internal/app/form"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/tools/paginater"
 )
 
 const (

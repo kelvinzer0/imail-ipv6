@@ -15,11 +15,11 @@ import (
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 
-	"github.com/midoks/imail/internal/app/form"
-	"github.com/midoks/imail/internal/app/template"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/app/form"
+	"github.com/kelvinzer0/imail/internal/app/template"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/log"
 )
 
 // Context represents context of a request.

@@ -14,7 +14,7 @@ import (
 
 	"gopkg.in/macaron.v1"
 
-	"github.com/midoks/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/tools"
 )
 
 //go:generate go-bindata -nomemcopy -nometadata -ignore="\\.DS_Store" -pkg=templates -prefix=../../../templates -debug=false -o=templates_gen.go ../../../templates/...

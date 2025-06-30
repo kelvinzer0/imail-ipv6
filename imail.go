@@ -6,11 +6,11 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/midoks/imail/internal/cmd"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/log"
-	"github.com/midoks/imail/internal/tools"
-	"github.com/midoks/imail/internal/tools/syscall"
+	"github.com/kelvinzer0/imail/internal/cmd"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/tools/syscall"
 )
 
 const Version = "0.0.19"

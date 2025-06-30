@@ -8,11 +8,11 @@ import (
 
 	_ "github.com/json-iterator/go"
 
-	"github.com/midoks/imail/internal/app/context"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/task"
-	"github.com/midoks/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/app/context"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/task"
+	"github.com/kelvinzer0/imail/internal/tools"
 )
 
 const (

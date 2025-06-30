@@ -20,8 +20,8 @@ mkdir -p $rootPath/tmp/package
 source ~/.bash_profile
 
 cd $rootPath
-LDFLAGS="-X \"github.com/midoks/imail/internal/conf.BuildTime=$(date -u '+%Y-%m-%d %I:%M:%S %Z')\""
-LDFLAGS="${LDFLAGS} -X \"github.com/midoks/imail/internal/conf.BuildCommit=$(git rev-parse HEAD)\""
+LDFLAGS="-X \"github.com/kelvinzer0/imail/internal/conf.BuildTime=$(date -u '+%Y-%m-%d %I:%M:%S %Z')\""
+LDFLAGS="${LDFLAGS} -X \"github.com/kelvinzer0/imail/internal/conf.BuildCommit=$(git rev-parse HEAD)\""
 
 
 echo $LDFLAGS

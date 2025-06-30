@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/midoks/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/conf"
 	"gopkg.in/macaron.v1"
 )
 

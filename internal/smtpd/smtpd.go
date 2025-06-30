@@ -12,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/log"
-	"github.com/midoks/imail/internal/tools"
-	"github.com/midoks/imail/internal/tools/mail"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/tools/mail"
 )
 
 const (

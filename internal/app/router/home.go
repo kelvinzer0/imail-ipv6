@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/midoks/imail/internal/app/context"
-	"github.com/midoks/imail/internal/app/router/mail"
-	"github.com/midoks/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/app/context"
+	"github.com/kelvinzer0/imail/internal/app/router/mail"
+	"github.com/kelvinzer0/imail/internal/db"
 )
 
 const (

@@ -5,8 +5,8 @@ import (
 	"context"
 	"errors"
 	// "fmt"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/rspamd"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/rspamd"
 	"strings"
 )
 

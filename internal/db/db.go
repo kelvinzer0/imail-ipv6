@@ -15,8 +15,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/midoks/imail/internal/conf"
-	imlog "github.com/midoks/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/conf"
+	imlog "github.com/kelvinzer0/imail/internal/log"
 )
 
 var (

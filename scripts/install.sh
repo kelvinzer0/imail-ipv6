@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# curl -fsSL  https://raw.githubusercontent.com/midoks/imail/master/scripts/install.sh | sh
+# curl -fsSL  https://raw.githubusercontent.com/kelvinzer0/imail/master/scripts/install.sh | sh
 
 check_go_environment() {
 	if test ! -x "$(command -v go)"; then

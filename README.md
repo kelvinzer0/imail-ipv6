@@ -16,9 +16,9 @@ The imail project aims to build a simple and stable email service in the easiest
 - Rspamd spam filtering support.
 - Hook script support.
 
-[![Go](https://github.com/midoks/imail/actions/workflows/go.yml/badge.svg)](https://github.com/midoks/imail/actions/workflows/go.yml)
-[![CodeQL](https://github.com/midoks/imail/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/midoks/imail/actions/workflows/codeql-analysis.yml)
-[![Codecov](https://codecov.io/gh/midoks/imail/branch/master/graph/badge.svg?token=MJ2HL6HFLR)](https://codecov.io/gh/midoks/imail)
+[![Go](https://github.com/kelvinzer0/imail/actions/workflows/go.yml/badge.svg)](https://github.com/kelvinzer0/imail/actions/workflows/go.yml)
+[![CodeQL](https://github.com/kelvinzer0/imail/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/kelvinzer0/imail/actions/workflows/codeql-analysis.yml)
+[![Codecov](https://codecov.io/gh/kelvinzer0/imail/branch/master/graph/badge.svg?token=MJ2HL6HFLR)](https://codecov.io/gh/kelvinzer0/imail)
 
 ## Screenshots
 
@@ -50,7 +50,7 @@ To install imail, you can build it from source. Make sure you have Go installed 
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/midoks/imail-ipv6.git
+    git clone https://github.com/kelvinzer0/imail-ipv6.git
     cd imail-ipv6
     ```
 2.  **Build the project:**
@@ -96,13 +96,13 @@ The backend API documentation is automatically generated using Swagger.
 
 ## Wiki
 
-- https://github.com/midoks/imail/wiki
+- https://github.com/kelvinzer0/imail/wiki
 
 ## Contributors
 
-[![](https://contrib.rocks/image?repo=midoks/imail)](https://github.com/midoks/imail/graphs/contributors)
+[![](https://contrib.rocks/image?repo=kelvinzer0/imail)](https://github.com/kelvinzer0/imail/graphs/contributors)
 
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/midoks/imail/blob/main/LICENSE) file for full details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/kelvinzer0/imail/blob/main/LICENSE) file for full details.

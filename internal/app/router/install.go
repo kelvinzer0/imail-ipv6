@@ -12,17 +12,17 @@ import (
 	"gopkg.in/ini.v1"
 	"gopkg.in/macaron.v1"
 
-	"github.com/midoks/imail/internal/app/context"
-	"github.com/midoks/imail/internal/app/form"
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/imap"
-	"github.com/midoks/imail/internal/log"
-	"github.com/midoks/imail/internal/pop3"
-	"github.com/midoks/imail/internal/smtpd"
-	"github.com/midoks/imail/internal/task"
-	"github.com/midoks/imail/internal/tools"
-	"github.com/midoks/imail/internal/tools/debug"
+	"github.com/kelvinzer0/imail/internal/app/context"
+	"github.com/kelvinzer0/imail/internal/app/form"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/imap"
+	"github.com/kelvinzer0/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/pop3"
+	"github.com/kelvinzer0/imail/internal/smtpd"
+	"github.com/kelvinzer0/imail/internal/task"
+	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/tools/debug"
 )
 
 const (
@@ -208,7 +208,7 @@ func InstallPost(c *context.Context, f form.Install) {
 	// if err := db.NewTestEngine(); err != nil {
 	// 	if strings.Contains(err.Error(), `Unknown database type: sqlite3`) {
 	// 		c.FormErr("DbType")
-	// 		c.RenderWithErr(c.Tr("install.sqlite3_not_available", "https://github.com/midoks/imail/wiki"), INSTALL, &f)
+	// 		c.RenderWithErr(c.Tr("install.sqlite3_not_available", "https://github.com/kelvinzer0/imail/wiki"), INSTALL, &f)
 	// 	} else {
 	// 		c.FormErr("DbSetting")
 	// 		c.RenderWithErr(c.Tr("install.invalid_db_setting", err), INSTALL, &f)

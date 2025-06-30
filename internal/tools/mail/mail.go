@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/midoks/imail/internal/conf"
-	"github.com/midoks/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail/internal/tools"
 )
 
 func GetMailSubject(content string) string {

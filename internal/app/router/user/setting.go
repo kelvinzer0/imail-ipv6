@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/midoks/imail/internal/app/context"
-	"github.com/midoks/imail/internal/app/form"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/app/context"
+	"github.com/kelvinzer0/imail/internal/app/form"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/tools"
 )
 
 const (

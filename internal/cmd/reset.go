@@ -5,10 +5,10 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/midoks/imail/internal/app/router"
-	"github.com/midoks/imail/internal/db"
-	"github.com/midoks/imail/internal/log"
-	"github.com/midoks/imail/internal/tools"
+	"github.com/kelvinzer0/imail/internal/app/router"
+	"github.com/kelvinzer0/imail/internal/db"
+	"github.com/kelvinzer0/imail/internal/log"
+	"github.com/kelvinzer0/imail/internal/tools"
 )
 
 var Reset = cli.Command{
