@@ -43,8 +43,8 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           export CC=aarch64-linux-gnu-gcc
           export CXX=aarch64-linux-gnu-g++
-          export CGO_CFLAGS="-target aarch64-linux-gnu"
-          export CGO_LDFLAGS="-target aarch64-linux-gnu"
+          export CGO_CFLAGS=""
+          export CGO_LDFLAGS=""
           CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -o imail .
           tar -czvf imail_${VERSION}_linux_arm64.tar.gz imail conf scripts LICENSE README.md
 
