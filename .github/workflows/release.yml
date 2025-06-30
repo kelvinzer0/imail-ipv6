@@ -12,6 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Before Build Steps
+        run: |
+          find . -name ".DS_Store" -print -delete
+          rm -rf logs/run_away.log
+          gofmt -w ./
+          go generate internal/assets/conf/conf.go
+          go generate internal/assets/public/public.go
+          go generate internal/assets/templates/templates.go
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
