@@ -41,7 +41,11 @@ jobs:
         run: |
           VERSION=$(echo ${{ github.ref }} | sed -e "s/^refs\/tags\/v//")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC_FOR_TARGET=aarch64-linux-gnu-gcc go build -o imail .
+          export CC=aarch64-linux-gnu-gcc
+          export CXX=aarch64-linux-gnu-g++
+          export CGO_CFLAGS="-target aarch64-linux-gnu"
+          export CGO_LDFLAGS="-target aarch64-linux-gnu"
+          CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -o imail .
           tar -czvf imail_${VERSION}_linux_arm64.tar.gz imail conf scripts LICENSE README.md
 
       - name: Create Release
