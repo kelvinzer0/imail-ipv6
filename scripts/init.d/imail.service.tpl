@@ -4,19 +4,18 @@ After=network.service
 After=syslog.target
 
 [Service]
-User=imail
-Group=imail
+User=root
+Group=root
 Type=simple
-WorkingDirectory={APP_PATH}
-ExecStart=imail service
+WorkingDirectory=/usr/local/imail
+ExecStart=/usr/local/imail/imail service
 ExecReload=/bin/kill -USR2 $MAINPID
 PermissionsStartOnly=true
-LimitNOFILE=65535
+LimitNOFILE=5000
 Restart=on-failure
 RestartSec=10
 RestartPreventExitStatus=1
 PrivateTmp=false
-
 
 [Install]
 WantedBy=multi-user.target
