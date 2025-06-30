@@ -2,12 +2,12 @@ package task
 
 import (
 	"fmt"
-	"github.com/kelvinzer0/imail/internal/conf"
-	"github.com/kelvinzer0/imail/internal/db"
-	"github.com/kelvinzer0/imail/internal/log"
-	"github.com/kelvinzer0/imail/internal/smtpd"
-	"github.com/kelvinzer0/imail/internal/tools/cron"
-	"github.com/kelvinzer0/imail/internal/tools/mail"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/db"
+	"github.com/kelvinzer0/imail-ipv6/internal/log"
+	"github.com/kelvinzer0/imail-ipv6/internal/smtpd"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools/cron"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools/mail"
 )
 
 var c = cron.New()

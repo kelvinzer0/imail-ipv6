@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kelvinzer0/imail/internal/conf"
-	"github.com/kelvinzer0/imail/internal/db"
-	"github.com/kelvinzer0/imail/internal/log"
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/db"
+	"github.com/kelvinzer0/imail-ipv6/internal/log"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 )
 
 var localhostCert = []byte(`-----BEGIN CERTIFICATE-----

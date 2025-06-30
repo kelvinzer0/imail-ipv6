@@ -12,8 +12,8 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/ini.v1"
 
-	"github.com/kelvinzer0/imail/internal/assets/conf"
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/assets/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 )
 
 // Asset is a wrapper for getting conf assets.

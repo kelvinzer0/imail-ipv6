@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kelvinzer0/imail/internal/conf"
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 )
 
 type MailContent struct {

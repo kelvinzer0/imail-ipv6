@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/kelvinzer0/imail/internal/app/context"
-	"github.com/kelvinzer0/imail/internal/app/form"
-	"github.com/kelvinzer0/imail/internal/db"
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/app/context"
+	"github.com/kelvinzer0/imail-ipv6/internal/app/form"
+	"github.com/kelvinzer0/imail-ipv6/internal/db"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 )
 
 const (

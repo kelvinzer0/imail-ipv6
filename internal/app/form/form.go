@@ -5,7 +5,7 @@ import (
 	"reflect"
 	// "strings"
 	"github.com/go-macaron/binding"
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 )
 
 type Empty struct {

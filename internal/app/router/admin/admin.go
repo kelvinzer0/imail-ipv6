@@ -8,11 +8,11 @@ import (
 
 	_ "github.com/json-iterator/go"
 
-	"github.com/kelvinzer0/imail/internal/app/context"
-	"github.com/kelvinzer0/imail/internal/conf"
-	"github.com/kelvinzer0/imail/internal/db"
-	"github.com/kelvinzer0/imail/internal/task"
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/app/context"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/db"
+	"github.com/kelvinzer0/imail-ipv6/internal/task"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 )
 
 const (

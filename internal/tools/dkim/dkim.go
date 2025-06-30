@@ -12,7 +12,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 )
 
 func makeRsa() ([]byte, []byte, error) {

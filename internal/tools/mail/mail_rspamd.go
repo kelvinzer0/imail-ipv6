@@ -5,8 +5,8 @@ import (
 	"context"
 	"errors"
 	// "fmt"
-	"github.com/kelvinzer0/imail/internal/conf"
-	"github.com/kelvinzer0/imail/internal/rspamd"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/rspamd"
 	"strings"
 )
 

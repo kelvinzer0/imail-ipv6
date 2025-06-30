@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	_ "github.com/kelvinzer0/imail/internal/tools"
+	_ "github.com/kelvinzer0/imail-ipv6/internal/tools"
 	// "gorm.io/gorm"
 	"strings"
 	// "errors"

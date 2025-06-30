@@ -1,1 +1,1 @@
-Update imail.service.tpl with correct ExecStart path
+Add before build steps to release.yml

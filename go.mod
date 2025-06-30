@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
 	github.com/editorconfig/editorconfig-core-go/v2 v2.6.2
-	github.com/fengbeihong/macaron-swagger v0.0.0-20180119014611-e83922500039 // indirect
+	github.com/fengbeihong/macaron-swagger v0.0.0-20180119014611-e83922500039
 	github.com/go-macaron/binding v1.2.0
 	github.com/go-macaron/cache v0.0.0-20200329073519-53bb48172687
 	github.com/go-macaron/captcha v0.2.0
@@ -22,7 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/stretchr/testify v1.10.0
-	github.com/swaggo/swag v1.16.4 // indirect
+	github.com/swaggo/swag v1.16.4
 	github.com/unknwon/i18n v0.0.0-20210904045753-ff3a8617e361
 	github.com/urfave/cli v1.22.16
 	golang.org/x/text v0.21.0

@@ -3,12 +3,12 @@ package admin
 import (
 	// "strings"
 
-	"github.com/kelvinzer0/imail/internal/app/context"
-	"github.com/kelvinzer0/imail/internal/app/form"
-	"github.com/kelvinzer0/imail/internal/conf"
-	"github.com/kelvinzer0/imail/internal/db"
-	"github.com/kelvinzer0/imail/internal/log"
-	"github.com/kelvinzer0/imail/internal/tools/paginater"
+	"github.com/kelvinzer0/imail-ipv6/internal/app/context"
+	"github.com/kelvinzer0/imail-ipv6/internal/app/form"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/db"
+	"github.com/kelvinzer0/imail-ipv6/internal/log"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools/paginater"
 )
 
 const (

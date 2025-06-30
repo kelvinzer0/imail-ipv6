@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kelvinzer0/imail/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 	"gorm.io/gorm"
 	"errors"
 )

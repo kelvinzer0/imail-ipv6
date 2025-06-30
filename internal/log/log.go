@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kelvinzer0/imail/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
 	go_logger "github.com/phachon/go-logger"
 )
 

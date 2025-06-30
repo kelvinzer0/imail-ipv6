@@ -6,11 +6,11 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/kelvinzer0/imail/internal/cmd"
-	"github.com/kelvinzer0/imail/internal/conf"
-	"github.com/kelvinzer0/imail/internal/log"
-	"github.com/kelvinzer0/imail/internal/tools"
-	"github.com/kelvinzer0/imail/internal/tools/syscall"
+	"github.com/kelvinzer0/imail-ipv6/internal/cmd"
+	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/kelvinzer0/imail-ipv6/internal/log"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools"
+	"github.com/kelvinzer0/imail-ipv6/internal/tools/syscall"
 )
 
 const Version = "0.0.19"
