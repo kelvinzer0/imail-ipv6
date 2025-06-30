@@ -1,58 +1,108 @@
 <p align="center">
   <img alt="logo" src="https://avatars2.githubusercontent.com/u/4169529?v=3&s=200" height="140" />
   <h3 align="center">imail</h3>
-  <p align="center">imail 是一款极易搭建的自助邮件服务。</p>
+  <p align="center">imail is an easy-to-set-up self-service email server.</p>
 </p>
 
 
 ---
-## 项目愿景
+## Project Vision
 
-imail项目旨在打造一个以最简便的方式搭建简单、稳定的邮件服务。使用 Go 语言开发使得 imail 能够通过独立的二进制分发，并且支持 Go 语言支持的 所有平台，包括 Linux、macOS、Windows 以及 ARM 平台。
+The imail project aims to build a simple and stable email service in the easiest way possible. Developed in Go, imail can be distributed as a standalone binary and supports all platforms supported by Go, including Linux, macOS, Windows, and ARM platforms.
 
-- 支持多域名管理。
-- 邮件草稿功能支持。
-- 邮件搜索功能支持。
-- Rspamd垃圾邮件过滤支持。
-- Hook脚本支持。
+- Supports multi-domain management.
+- Email draft functionality.
+- Email search functionality.
+- Rspamd spam filtering support.
+- Hook script support.
 
 [![Go](https://github.com/midoks/imail/actions/workflows/go.yml/badge.svg)](https://github.com/midoks/imail/actions/workflows/go.yml)
 [![CodeQL](https://github.com/midoks/imail/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/midoks/imail/actions/workflows/codeql-analysis.yml)
 [![Codecov](https://codecov.io/gh/midoks/imail/branch/master/graph/badge.svg?token=MJ2HL6HFLR)](https://codecov.io/gh/midoks/imail)
 
-## 版本截图
+## Screenshots
 
 [![main](/screenshot/main.png)](/screenshot/main.png)
 
 
-## 版本详情
+## Version Details
 
 - 0.0.18
 
 ```
-* 增加修改管理员修改密码功能.
-* 优化日志显示.
-* initd 改为systemd.
-* 修复初始化无法登录的现象.
-* ssl功能优化.
-* 优化一下提示。
+* Added password modification function for administrators.
+* Optimized log display.
+* initd changed to systemd.
+* Fixed the phenomenon of being unable to log in during initialization.
+* SSL function optimization.
+* Optimized some prompts.
 ```
 
-## 编译依赖
+## Build Dependencies
+
 ```
 go install -a -v github.com/go-bindata/go-bindata/...@latest
 ```
+
+## Installation
+
+To install imail, you can build it from source. Make sure you have Go installed (version 1.16 or higher recommended).
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/midoks/imail-ipv6.git
+    cd imail-ipv6
+    ```
+2.  **Build the project:**
+    ```bash
+    go build ./...
+    ```
+    This will create an executable file in your current directory (e.g., `imail.exe` on Windows, `imail` on Linux/macOS).
+3.  **Run the application:**
+    ```bash
+    ./imail service
+    ```
+    (Replace `./imail` with `imail.exe` on Windows)
+
+## Uninstallation
+
+To uninstall imail, simply remove the cloned repository directory and any generated executable files.
+
+```bash
+rm -rf imail-ipv6
+# If you installed the binary to your PATH, you might need to remove it manually.
+# For example: rm /usr/local/bin/imail
+```
+
+## Swagger API Documentation
+
+The backend API documentation is automatically generated using Swagger.
+
+1.  **Generate Swagger documentation:**
+    Ensure you have `swag` installed:
+    ```bash
+    go install github.com/swaggo/swag/cmd/swag@latest
+    ```
+    Then, generate the documentation from the project root:
+    ```bash
+    swag init -generalInfo imail.go
+    ```
+    This will create `docs` directory containing `docs.go`, `swagger.json`, and `swagger.yaml`.
+
+2.  **Access Swagger UI:**
+    Once the `imail` application is running, you can access the Swagger UI in your web browser at:
+    `http://localhost:<port>/swagger/index.html`
+    (Replace `<port>` with the actual port your imail application is running on, e.g., 8080).
 
 ## Wiki
 
 - https://github.com/midoks/imail/wiki
 
-## 贡献者
+## Contributors
 
 [![](https://contrib.rocks/image?repo=midoks/imail)](https://github.com/midoks/imail/graphs/contributors)
 
 
-## 授权许可
+## License
 
-本项目采用 MIT 开源授权许可证，完整的授权说明已放置在 [LICENSE](https://github.com/midoks/imail/blob/main/LICENSE) 文件中。
-
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/midoks/imail/blob/main/LICENSE) file for full details.
