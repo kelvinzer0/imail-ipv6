@@ -100,6 +100,11 @@ main() {
 		cp -r "$TARGET_DIR/docs" "$TARGET_DIR/docs_backup"
 	fi
 
+	# Execute make.sh to create service files
+	pushd "$TARGET_DIR/scripts" >/dev/null 2>&1
+	bash make.sh
+	popd >/dev/null 2>&1
+
 	systemctl daemon-reload
 	systemctl restart imail
 
