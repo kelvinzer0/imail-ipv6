@@ -104,10 +104,8 @@ main() {
 		cp -r "$TARGET_DIR/docs" "$TARGET_DIR/docs_backup"
 	fi
 
-	# Execute make.sh to create service files
-	pushd "$TARGET_DIR/scripts" >/dev/null 2>&1
-	bash make.sh
-	popd >/dev/null 2>&1
+	# Create systemd service file
+	sed "s:{APP_PATH}:${TARGET_DIR}:g" "$TARGET_DIR/scripts/init.d/imail.service.tpl" | sudo tee /etc/systemd/system/imail.service > /dev/null
 
 	systemctl daemon-reload
 	systemctl restart imail
