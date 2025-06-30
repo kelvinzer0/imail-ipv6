@@ -20,14 +20,22 @@ func TaskQueueeSendMail() {
 	}
 
 	postmaster := fmt.Sprintf("postmaster@%s", from)
-	result := db.MailSendListForStatus(2, 1)
+	result, err := db.MailSendListForStatus(2, 1)
+	if err != nil {
+		log.Errorf("MailSendListForStatus error: %v", err)
+		return
+	}
 	if len(result) == 0 {
 
-		result = db.MailSendListForStatus(0, 1)
+		result, err = db.MailSendListForStatus(0, 1)
+		if err != nil {
+			log.Errorf("MailSendListForStatus error: %v", err)
+			return
+		}
 		for _, val := range result {
 			db.MailSetStatusById(val.Id, 2)
 
-			content, err := db.MailContentRead(result[0].Uid, result[0].Id)
+			content, err := db.MailContentRead(val.Uid, val.Id)
 			if err != nil {
 				continue
 			}
@@ -44,7 +52,11 @@ func TaskQueueeSendMail() {
 
 func TaskRspamdCheck() {
 
-	result := db.MailListForRspamd(1)
+	result, err := db.MailListForRspamd(1)
+	if err != nil {
+		log.Errorf("MailListForRspamd error: %v", err)
+		return
+	}
 	if conf.Rspamd.Enable {
 		for _, val := range result {
 			content, err := db.MailContentRead(val.Uid, val.Id)

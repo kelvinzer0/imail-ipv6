@@ -52,19 +52,22 @@ func DomainVaildList(page, pageSize int) ([]Domain, error) {
 	return domain, err
 }
 
-func DomainVaild(name string) bool {
+func DomainVaild(name string) (bool, error) {
 	var d Domain
 	result := db.Model(&Domain{}).Where("domain=?", name).Where("a=?", 1).
 		Where("mx=?", 1).
 		Where("spf=?", 1).
 		Where("dkim=?", 1).
 		Where("dmarc=?", 1).
-		Find(&d).Error
+		Find(&d)
 
-	if result == nil && d.Id > 0 {
-		return true
+	if result.Error == gorm.ErrRecordNotFound {
+		return false, nil
 	}
-	return false
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return d.Id > 0, nil
 }
 
 func DomainList(page, pageSize int) ([]Domain, error) {

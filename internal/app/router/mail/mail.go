@@ -10,6 +10,7 @@ import (
 
 	"github.com/midoks/imail/internal/app/context"
 	"github.com/midoks/imail/internal/app/form"
+	"github.com/midoks/imail/internal/conf"
 	"github.com/midoks/imail/internal/db"
 	"github.com/midoks/imail/internal/tools"
 	tmail "github.com/midoks/imail/internal/tools/mail"
@@ -25,17 +26,28 @@ const (
 )
 
 type MailSearchOptions struct {
-	page     int
+	Page     int
 	PageSize int
 	OrderBy  string
 	TplName  string
 	Type     int
 	Bid      int64
+	Keyword  string
 }
 
+// @Summary Get mail list
+// @Description Get a list of mails with pagination and search options
+// @Accept json
+// @Produce html
+// @Param page query int false "Page number"
+// @Param pageSize query int false "Number of items per page"
+// @Param keyword query string false "Search keyword"
+// @Success 200 {string} string "OK"
+// @Failure 500 {object} string "Internal Server Error"
+// @Router /mail [get]
 func RenderMailSearch(c *context.Context, opts *MailSearchOptions) {
 	var (
-		mails []*db.Mail
+		mails []db.Mail
 		count int64
 		err   error
 	)
@@ -50,20 +62,20 @@ func RenderMailSearch(c *context.Context, opts *MailSearchOptions) {
 
 	mails, err = db.MailList(opts.Type, opts.Page, opts.PageSize, opts.Keyword)
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailList", err)
+		c.Error(err, "MailList")
 		return
 	}
 
 	count, err = db.MailCountWithOpts(&db.MailSearchOptions{Type: opts.Type, Keyword: opts.Keyword})
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailCountWithOpts", err)
+		c.Error(err, "MailCountWithOpts")
 		return
 	}
 
 	c.Data["Keyword"] = opts.Keyword
 	c.Data["Mails"] = mails
 	c.Data["Total"] = count
-	c.Data["Page"] = paginater.New(int(count), opts.PageSize, opts.Page, c.Req.URL.Query())
+	c.Data["Page"] = paginater.New(int(count), opts.PageSize, opts.Page, c.QueryInt("page"))
 
 	c.Success(opts.TplName)
 }
@@ -189,17 +201,17 @@ func New(c *context.Context) {
 
 	mail, err := db.MailById(id)
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailById", err)
+		c.Error(err, "MailById")
 		return
 	}
 	content, err := db.MailContentRead(mail.Uid, mail.Id)
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailContentRead", err)
+		c.Error(err, "MailContentRead")
 		return
 	}
 	email, err := mcopa.Parse(bufio.NewReader(strings.NewReader(content)))
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "mcopa.Parse", err)
+		c.Error(err, "mcopa.Parse")
 		return
 	}
 
@@ -304,7 +316,7 @@ func Content(c *context.Context) {
 
 	r, err := db.MailById(id)
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailById", err)
+		c.Error(err, "MailById")
 		return
 	}
 	c.Data["Mail"] = r
@@ -339,7 +351,7 @@ func ContentHtml(c *context.Context) {
 
 	r, err := db.MailById(id)
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailById", err)
+		c.Error(err, "MailById")
 		return
 	}
 	c.Data["Mail"] = r
@@ -371,7 +383,7 @@ func ContentDownload(c *context.Context) {
 	r, err := db.MailById(id)
 
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailById", err)
+		c.Error(err, "MailById")
 		return
 	}
 	emailFilePath := db.MailContentFilename(r.Uid, id)
@@ -393,7 +405,7 @@ func ContentAttach(c *context.Context) {
 
 	r, err := db.MailById(id)
 	if err != nil {
-		c.Handle(http.StatusInternalServerError, "MailById", err)
+		c.Error(err, "MailById")
 		return
 	}
 	c.Data["Mail"] = r
@@ -451,7 +463,7 @@ func ContentDemo(c *context.Context) {
 
 /****************************************************
  * API for web frontend call
- ***************************************************/
+ ****************************************************/
 func ApiDeleted(c *context.Context, f form.MailIDs) {
 	ids := f.Ids
 	idsSlice, err := tools.ToSlice(ids)

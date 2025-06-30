@@ -23,6 +23,9 @@ import (
 	"github.com/midoks/imail/internal/app/template"
 	"github.com/midoks/imail/internal/assets/templates"
 	"github.com/midoks/imail/internal/conf"
+
+	swagger "github.com/fengbeihong/macaron-swagger"
+	swaggerFiles "github.com/fengbeihong/macaron-swagger/swaggerFiles"
 )
 
 func newMacaron() *macaron.Macaron {
@@ -109,6 +112,9 @@ func setRouter(m *macaron.Macaron) *macaron.Macaron {
 
 	bindIgnErr := binding.BindIgnErr
 	m.SetAutoHead(true)
+
+	// Swagger UI
+	m.Get("/swagger/*", swagger.WrapHandler(swaggerFiles.Handler))
 
 	m.Group("", func() {
 		m.Combo("/install", router.InstallInit).Get(router.Install).Post(bindIgnErr(form.Install{}), router.InstallPost)

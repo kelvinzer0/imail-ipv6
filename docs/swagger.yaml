@@ -1,0 +1,34 @@
+info:
+  contact: {}
+paths:
+  /mail:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of mails with pagination and search options
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of items per page
+        in: query
+        name: pageSize
+        type: integer
+      - description: Search keyword
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get mail list
+swagger: "2.0"

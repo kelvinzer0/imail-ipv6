@@ -28,6 +28,7 @@ var (
 		RunMode   string
 
 		PublicFs embed.FS
+		PageSize int
 	}
 
 	// log

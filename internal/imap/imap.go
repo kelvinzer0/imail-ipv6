@@ -302,8 +302,8 @@ func (this *ImapServer) cmdAuth(input string) bool {
 		user := strings.Trim(inputN[2], "\"")
 		pwd := strings.Trim(inputN[3], "\"")
 
-		isLogin, id := db.LoginWithCode(user, pwd)
-		if isLogin {
+				id, err := db.LoginWithCode(user, pwd)
+		if err == nil {
 			this.userID = id
 			this.writeArgs(MSG_LOGIN_OK, inputN[0])
 			return true
@@ -395,7 +395,11 @@ func (this *ImapServer) cmdSelect(input string) bool {
 	if len(inputN) == 3 {
 		if this.cmdCompare(inputN[1], CMD_SELECT) {
 			this.selectBox = strings.Trim(inputN[2], "\"")
-			msgCount, _ := db.BoxUserMessageCountByClassName(this.userID, this.selectBox)
+			msgCount, _, err := db.BoxUserMessageCountByClassName(this.userID, this.selectBox)
+			if err != nil {
+				this.error(MSG_CMD_NOT_VALID)
+				return false
+			}
 			this.writeArgs("* %d EXISTS", msgCount)
 			this.writeArgs("* 0 RECENT")
 			this.writeArgs("* OK [UIDVALIDITY 1] UIDs valid")
@@ -412,7 +416,11 @@ func (this *ImapServer) cmdFecth(input string) bool {
 	inputN := strings.SplitN(input, " ", 4)
 	if len(inputN) == 4 {
 		if this.cmdCompare(inputN[1], CMD_FETCH) {
-			mailList := db.MailListForImap(this.userID)
+			mailList, err := db.MailListForImap(this.userID)
+			if err != nil {
+				this.error(MSG_CMD_NOT_VALID)
+				return false
+			}
 			for i, m := range mailList {
 				this.writeArgs("* %d FETCH (UID %d)", i+1, m.Id)
 			}

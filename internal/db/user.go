@@ -109,7 +109,7 @@ func UsersVaildCount() int64 {
 	return count
 }
 
-func LoginWithCode(name string, code string) (bool, error) {
+func LoginWithCode(name string, code string) (int64, error) {
 
 	list := strings.SplitN(name, "@", 2)
 
@@ -117,29 +117,29 @@ func LoginWithCode(name string, code string) (bool, error) {
 
 	err := db.First(&u, "name = ?", list[0]).Error
 	if err != nil {
-		return false, err
+		return 0, err
 	}
 
 	if u.Code == code {
-		return true, nil
+		return u.Id, nil
 	}
 
-	return false, errors.New("invalid code")
+	return 0, errors.New("invalid code")
 }
 
-func LoginByUserPassword(name string, password string) (bool, error) {
+func LoginByUserPassword(name string, password string) (int64, error) {
 	var u User
 	err := db.First(&u, "name = ?", name).Error
 
 	if err != nil {
-		return false, err
+		return 0, err
 	}
 
 	inputPwd := tools.Md5(tools.Md5(password) + u.Salt)
 	if inputPwd == u.Password {
-		return true, nil
+		return u.Id, nil
 	}
-	return false, errors.New("invalid password")
+	return 0, errors.New("invalid password")
 }
 
 func UserCheckIsExist(name string) (bool, error) {

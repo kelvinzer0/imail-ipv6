@@ -100,9 +100,9 @@ func LoginPost(c *context.Context, f form.SignIn) {
 
 	fmt.Println(f.UserName, f.Password)
 
-	loginBool, uid := db.LoginByUserPassword(f.UserName, f.Password)
+	userID, err := db.LoginByUserPassword(f.UserName, f.Password)
 
-	if !loginBool {
+	if err != nil {
 		c.FormErr("UserName", "Password")
 		c.RenderWithErr(c.Tr("form.username_password_incorrect"), LOGIN, &f)
 		return
@@ -127,7 +127,7 @@ func LoginPost(c *context.Context, f form.SignIn) {
 	}
 
 	// session.Start(c)
-	c.Session.Set("uid", uid)
+	c.Session.Set("uid", userID)
 	c.Session.Set("uname", f.UserName)
 
 	// Clear whatever CSRF has right now, force to generate a new one

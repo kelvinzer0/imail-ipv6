@@ -218,3 +218,15 @@ func CheckDomain(c *context.Context) {
 	}
 	c.Redirect(conf.Web.Subpath + "/admin/domain")
 }
+
+func SetDefaultDomain(c *context.Context) {
+	id := c.ParamsInt64(":id")
+
+	err := db.DomainSetDefaultOnlyOne(id)
+	if err != nil {
+		c.Flash.Error(c.Tr("admin.domain.set_default_fail"))
+	} else {
+		c.Flash.Success(c.Tr("admin.domain.set_default_success"))
+	}
+	c.Redirect(conf.Web.Subpath + "/admin/domain")
+}

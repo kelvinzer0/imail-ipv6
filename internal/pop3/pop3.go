@@ -178,8 +178,8 @@ func (this *Pop3Server) checkUserLogin() bool {
 	name := this.recordCmdUser
 	pwd := strings.TrimSpace(this.recordCmdPass)
 
-	isLogin, id := db.LoginWithCode(name, pwd)
-	if !isLogin {
+	id, err := db.LoginWithCode(name, pwd)
+	if err != nil {
 		return false
 	}
 	this.userID = id
@@ -213,7 +213,11 @@ func (this *Pop3Server) cmdPass(input string) bool {
 		this.recordCmdPass = strings.TrimSpace(inputN[1])
 
 		if this.checkUserLogin() {
-			count, size := db.MailStatInfoForPop(this.userID)
+			count, size, err := db.MailStatInfoForPop(this.userID)
+			if err != nil {
+				this.error(MSG_LOGIN_DISABLE)
+				return false
+			}
 			this.writeArgs(MSG_LOGIN_OK, count, size)
 			return true
 		}
@@ -225,7 +229,11 @@ func (this *Pop3Server) cmdPass(input string) bool {
 
 func (this *Pop3Server) cmdStat(input string) bool {
 	if this.cmdCompare(input, CMD_STAT) {
-		count, size := db.MailStatInfoForPop(this.userID)
+		count, size, err := db.MailStatInfoForPop(this.userID)
+		if err != nil {
+			this.error(MSG_CMD_NOT_VALID)
+			return false
+		}
 		this.writeArgs(MSG_STAT_OK, count, size)
 		return true
 	}
@@ -238,10 +246,18 @@ func (this *Pop3Server) cmdList(input string) bool {
 	if this.cmdCompare(inputN[0], CMD_LIST) {
 		inputLen := len(inputN)
 		if inputLen == 1 {
-			count, size := db.MailStatInfoForPop(this.userID)
+			count, size, err := db.MailStatInfoForPop(this.userID)
+			if err != nil {
+				this.error(MSG_CMD_NOT_VALID)
+				return false
+			}
 			this.writeArgs(MSG_STAT_OK, count, size)
 
-			mailList := db.MailListForPop(this.userID)
+			mailList, err := db.MailListForPop(this.userID)
+			if err != nil {
+				this.error(MSG_CMD_NOT_VALID)
+				return false
+			}
 			for i, m := range mailList {
 				this.writeInfo(MSG_STAT_OK, i+1, m.Size)
 			}
@@ -253,6 +269,7 @@ func (this *Pop3Server) cmdList(input string) bool {
 
 	return false
 }
+
 
 func (this *Pop3Server) cmdUidl(input string) bool {
 	inputN := strings.SplitN(input, " ", 2)

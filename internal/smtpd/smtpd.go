@@ -311,13 +311,13 @@ func (smtp *SmtpdServer) checkUserLogin() bool {
 	name := smtp.loginUser
 	pwd := strings.TrimSpace(smtp.loginPwd)
 
-	isLogin, id := db.LoginWithCode(name, pwd)
+	userID, err := db.LoginWithCode(name, pwd)
 
-	if !isLogin {
+	if err != nil {
 		return false
 	}
 
-	smtp.userID = id
+	smtp.userID = userID
 	smtp.isLogin = true
 	return true
 }
@@ -380,7 +380,8 @@ func (smtp *SmtpdServer) cmdAuthPlainLogin(input string) (bool, bool) {
 }
 
 func (smtp *SmtpdServer) isAllowDomain(domain string) bool {
-	return db.DomainVaild(domain)
+	isVaild, _ := db.DomainVaild(domain)
+	return isVaild
 }
 
 func (smtp *SmtpdServer) cmdMailFrom(input string) bool {
