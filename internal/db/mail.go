@@ -402,8 +402,8 @@ func MailUpdate(id int64, uid int64, mtype int, mail_from string, mail_to string
 		IsDraft:           is_draft,
 	}
 
-	m.UpdatedUnix = time.Now().Unix()
-	m.CreatedUnix = time.Now().Unix()
+	m.Updated = time.Now()
+	m.Created = time.Now()
 	result := tx.Save(&m)
 
 	if result.Error != nil {
@@ -448,8 +448,6 @@ func MailPush(uid int64, mtype int, mail_from string, mail_to string, content st
 
 	m.Updated = time.Now()
 	m.Created = time.Now()
-	m.UpdatedUnix = time.Now().Unix()
-	m.CreatedUnix = time.Now().Unix()
 	result := tx.Create(&m)
 
 	if result.Error != nil {

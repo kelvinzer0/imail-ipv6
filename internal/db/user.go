@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/midoks/imail/internal/tools"
+	"gorm.io/gorm"
+	"errors"
 )
 
 type User struct {

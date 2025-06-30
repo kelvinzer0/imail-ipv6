@@ -3,6 +3,8 @@ package db
 import (
 	// "fmt"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Domain struct {
