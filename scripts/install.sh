@@ -6,7 +6,7 @@ check_go_environment() {
 	if test ! -x "$(command -v go)"; then
 		printf "\e[1;31mmissing go running environment\e[0m\n"
 		exit 1
-	fi
+	}
 }
 
 load_vars() {
@@ -94,14 +94,18 @@ main() {
 		rm -rf "$DOWNLOAD_FILE"
 	fi
 
-	pushd "$TARGET_DIR/scripts" >/dev/null 2>&1
-	bash make.sh
+	# Copy docs directory if it exists in the extracted tarball
+	if [ -d "$TARGET_DIR/docs" ]; then
+		cp -r "$TARGET_DIR/docs" "$TARGET_DIR/docs_backup"
+	fi
 
 	systemctl daemon-reload
-	service imail restart
+	systemctl restart imail
 
-	cd .. && ./imail -v	
-	popd >/dev/null 2>&1
+	"$TARGET_DIR/imail" -v	
+
+	printf "\n\e[1;32mImail installation complete!\e[0m\n"
+	printf "\e[1;32mPlease complete the initial setup by visiting http://localhost:1080/install in your web browser.\e[0m\n"
 }
 
 main "$@" || exit 1
