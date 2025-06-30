@@ -29,6 +29,6 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/macaron.v1 v1.5.0
 	gorm.io/driver/mysql v1.5.7
-	gorm.io/driver/sqlite v1.5.7
+	github.com/glebarez/sqlite v1.7.6
 	gorm.io/gorm v1.25.12
 )

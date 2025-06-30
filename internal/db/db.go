@@ -11,7 +11,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
