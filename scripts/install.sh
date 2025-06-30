@@ -72,26 +72,31 @@ main() {
 		local_tar_gz="$1"
 	fi
 
-	if [ -z "$local_tar_gz" ]; then
-		get_arch
-		get_download_url
-		DOWNLOAD_FILE="$(mktemp).tar.gz"if [ -f "$DOWNLOAD_FILE" ]; thenprintf "\n\e[1;33mDownload skipped, file already exists: %s\e[0m\n" "$DOWNLOAD_FILE"else	download_file "$DOWNLOAD_URL" "$DOWNLOAD_FILE"fi
+	if [ -f "$TARGET_DIR/imail" ]; then
+		printf "\n\e[1;32mImail is already installed in %s. Skipping download and extraction.\e[0m\n" "$TARGET_DIR"
 	else
-		DOWNLOAD_FILE="$local_tar_gz"
-		if [ ! -f "$DOWNLOAD_FILE" ]; then
-			printf "\e[1;31mError: Local tar.gz file not found: %s\e[0m\n" "$DOWNLOAD_FILE"
-			exit 1
+		if [ -z "$local_tar_gz" ]; then
+			get_arch
+			get_download_url
+			DOWNLOAD_FILE="$(mktemp).tar.gz"
+			download_file "$DOWNLOAD_URL" "$DOWNLOAD_FILE"
+		else
+			DOWNLOAD_FILE="$local_tar_gz"
+			if [ ! -f "$DOWNLOAD_FILE" ]; then
+				printf "\e[1;31mError: Local tar.gz file not found: %s\e[0m\n" "$DOWNLOAD_FILE"
+				exit 1
+			fi
+			printf "\n\e[1;33mUsing local tar.gz file: %s\e[0m\n" "$DOWNLOAD_FILE"
 		fi
-		printf "\n\e[1;33mUsing local tar.gz file: %s\e[0m\n" "$DOWNLOAD_FILE"
-	fi
 
-	if [ ! -d "$TARGET_DIR" ]; then
-		mkdir -p "$TARGET_DIR"
-	fi
+		if [ ! -d "$TARGET_DIR" ]; then
+			mkdir -p "$TARGET_DIR"
+		fi
 
-	tar -C "$TARGET_DIR" -zxf "$DOWNLOAD_FILE"
-	if [ -z "$local_tar_gz" ]; then
-		rm -rf "$DOWNLOAD_FILE"
+		tar -C "$TARGET_DIR" -zxf "$DOWNLOAD_FILE"
+		if [ -z "$local_tar_gz" ]; then
+			rm -rf "$DOWNLOAD_FILE"
+		fi
 	fi
 
 	# Copy docs directory if it exists in the extracted tarball
