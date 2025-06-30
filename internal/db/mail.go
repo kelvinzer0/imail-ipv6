@@ -31,8 +31,8 @@ type Mail struct {
 
 	IsCheck bool `gorm:"default:0;comment:是否通过检查"`
 
-	Created     time.Time `gorm:"autoCreateTime;comment:创建时间"`
-	Updated     time.Time `gorm:"autoCreateTime;comment:更新时间"`
+	Created time.Time `gorm:"autoCreateTime;comment:创建时间"`
+	Updated time.Time `gorm:"autoCreateTime;comment:更新时间"`
 }
 
 const (

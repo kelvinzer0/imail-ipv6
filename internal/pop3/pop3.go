@@ -270,7 +270,6 @@ func (this *Pop3Server) cmdList(input string) bool {
 	return false
 }
 
-
 func (this *Pop3Server) cmdUidl(input string) bool {
 	inputN := strings.SplitN(input, " ", 2)
 	if this.cmdCompare(inputN[0], CMD_UIDL) {

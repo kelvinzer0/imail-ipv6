@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/editorconfig/editorconfig-core-go/v2"
-	"github.com/microcosm-cc/bluemonday"
 	"github.com/kelvinzer0/imail-ipv6/internal/conf"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/unknwon/i18n"
 )
 

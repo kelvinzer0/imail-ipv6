@@ -302,7 +302,7 @@ func (this *ImapServer) cmdAuth(input string) bool {
 		user := strings.Trim(inputN[2], "\"")
 		pwd := strings.Trim(inputN[3], "\"")
 
-				id, err := db.LoginWithCode(user, pwd)
+		id, err := db.LoginWithCode(user, pwd)
 		if err == nil {
 			this.userID = id
 			this.writeArgs(MSG_LOGIN_OK, inputN[0])

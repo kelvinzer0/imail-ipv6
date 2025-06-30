@@ -68,9 +68,9 @@ func getEngine() (*sql.DB, error) {
 		})
 
 		// synchronous close
-						if res := db.Exec("PRAGMA synchronous = OFF;"); res.Error != nil {
-					return nil, res.Error
-				}
+		if res := db.Exec("PRAGMA synchronous = OFF;"); res.Error != nil {
+			return nil, res.Error
+		}
 	default:
 		return nil, errors.New("database type not found")
 	}

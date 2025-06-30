@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"errors"
 	"github.com/kelvinzer0/imail-ipv6/internal/tools"
 	"gorm.io/gorm"
-	"errors"
 )
 
 type User struct {
@@ -22,8 +22,8 @@ type User struct {
 	IsActive bool
 	IsAdmin  bool
 
-	Created     time.Time `gorm:"autoCreateTime;comment:创建时间"`
-	Updated     time.Time `gorm:"autoCreateTime;comment:更新时间"`
+	Created time.Time `gorm:"autoCreateTime;comment:创建时间"`
+	Updated time.Time `gorm:"autoCreateTime;comment:更新时间"`
 }
 
 func (User) TableName() string {
